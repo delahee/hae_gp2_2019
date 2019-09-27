@@ -6,6 +6,7 @@
 #include <cstdlib>//#include "stdlib.h"
 #include <cstdio>//#include "stdio.h"
 #include <chrono>
+#include <functional>
 
 int appel( int & s ) {
 	s++;
@@ -27,6 +28,15 @@ Vec3 stackOverflow(Vec3 _in) {
 	Vec3 temp = _in;
 	temp.y++;
 	return stackOverflow(temp);
+}
+
+int Strlen(const char * src ) {
+	//return len
+	return 0;
+}
+
+void Strcpy( char * dest, const char * src) {
+	//put copy in dest
 }
 
 int main()
@@ -93,7 +103,7 @@ int main()
 
 	//int * ptr = (int*)0x3fdd00ee;
 	//(*ptr)++;
-
+	/*
 	auto start = std::chrono::system_clock::now();
 	int * bigBlock = (int*) malloc(1024 * 1024 * 1024);
 	for (int k = 0; k < 64 * 1024 * 1024;++k) {
@@ -104,6 +114,51 @@ int main()
 	auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 	printf("time ? : %d\n", millis);
 	int _i = 0;
+	*/
+	/*
+	Vec3 tableau[16];
+	Vec3 *tableau0 = (Vec3*) malloc( sizeof(Vec3) * 16 );//en C pur
+	memset(tableau, 0, sizeof(Vec3) * 16);
+
+	Vec3 *tableau1 = (Vec3*) calloc( sizeof(Vec3) , 16);// en C pur
+
+	Vec3 *tableau2 = new Vec3[16];//c++
+	Vec3 * unSeulVec = new Vec3();//c++ allocation dynamique
+	Vec3 unSeulVecAussiMaisSurLeTas = Vec3(); //c++ allocation statique
+	*/
+	int _i = 0;
+
+	/*
+	int Strlen(const char * src ) {
+		//return len
+	}
+
+	void Strcpy( char * dest, const char * src) {
+		//put copy in dest
+	}
+	*/
+
+	/** A function that returns the length of a char string
+	*/
+	std::function<int(const char*)> StrLen = [](const char * src) {
+		int counter = 0;
+		while( true ){
+			char current = *src;
+			if (current == 0)
+				break;
+			src++;
+			counter++;
+		}
+		return counter;
+	};
+
+	const char * source = "mon lapin est dodu";
+	int len = StrLen(source);
+	char * dest = (char*) calloc( 1024, sizeof(char) );
+	Strcpy(dest, source);
+
+	printf("dest len:%d val:%s \n", StrLen(source), dest);
+
 }
 
 
