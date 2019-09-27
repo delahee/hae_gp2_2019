@@ -30,14 +30,6 @@ Vec3 stackOverflow(Vec3 _in) {
 	return stackOverflow(temp);
 }
 
-int Strlen(const char * src ) {
-	//return len
-	return 0;
-}
-
-void Strcpy( char * dest, const char * src) {
-	//put copy in dest
-}
 
 int main()
 {
@@ -152,13 +144,31 @@ int main()
 		return counter;
 	};
 
+	std::function<void(char*,const char*)> Strcpy = [](char * dst, const char * src) {
+		/*
+		int i = 0;
+		while (true) {
+			dst[i] = src[i];
+			if (src[i] == 0)
+				break;
+			i++;
+		}*/
+		/*
+		while (*dst++ = *src++ );
+		*/
+
+		for (int i = 0; src[i]; i++) 
+			dst[i] = src[i];
+		
+	};
+
 	const char * source = "mon lapin est dodu";
 	int len = StrLen(source);
 	char * dest = (char*) calloc( 1024, sizeof(char) );
 	Strcpy(dest, source);
 
 	printf("dest len:%d val:%s \n", StrLen(source), dest);
-
+	int a = 0;
 }
 
 
