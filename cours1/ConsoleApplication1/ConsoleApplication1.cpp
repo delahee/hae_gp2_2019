@@ -408,7 +408,9 @@ int StrcmpRec(char * str0, char * str1) {
 //chercher le \0 ( charactere 0 dans str0 )
 // puis copier str1
 void StrcatRec(char * str0, char * str1) {
-	return;
+	//si str1 est vide sortir
+	//si str0 est fini, copier str1 dans str0
+	//sinon strcatrec ( avancer str 0, str 1 )
 }
 
 //chercher le char tok dans str et renvoie un pointeur vers la position
@@ -433,12 +435,40 @@ void TestRec() {
 	ZeroMemory(buffer, szBuf);
 	printf("%c", buffer[32]);
 
-
 	char toto[32];
 	char tata[32]=  "it's me mariooo";
 	MemcpyRec(toto, tata, strlen(tata) + 1);
 	if (toto[0] != tata[0])
 		throw std::exception("hmm?");
+
+	{
+		char lapin[32] = "it's me mariooo";
+		char lapin2[32] = "it's me marioooOOOO";
+
+		if (StrcmpRec(lapin, lapin2) != 1)
+			throw std::exception("bad lex order ");
+	}
+
+	{
+		char lapin[32] = "it's me mariooo";
+		char lapin2[32] = "it's me mario";
+
+		if (StrcmpRec(lapin, lapin2) != -1)
+			throw std::exception("bad lex order ");
+	}
+
+	{
+		char lapin[32] = "";
+		char lapin2[32] = "it's me mario";
+
+		if (StrcmpRec(lapin, lapin2) != 1)
+			throw std::exception("bad lex order ");
+	}
+	//throw std::exception("bwwwwwwwwwwaaaaaaaaaa");
+
+
+
+
 
 	system("pause");
 }
