@@ -371,25 +371,74 @@ int mod_rec2(int a, int b) {
 	return mod_rec2(a - b, b);
 }
 
+int StrlenRec(const char * str) {
+	if (*str == 0) return 0;
+	return 1 + StrlenRec(str + 1);
+}
+
+void StrCpyRec(char * dst, const char * src) {
+	*dst = *src;//copy the final zero
+	if (*src == 0) return;
+	StrCpyRec(dst + 1, src + 1);
+}
+
+void ZeroMemory(char * dst, int size) {
+	if (size == 0) return;
+	*dst = 0;
+	ZeroMemory(dst + 1, size - 1);
+}
+
+void MemcpyRec(char * dst,const char * src, int size) {
+	if (size == 0) return;
+	*dst = *src;
+	MemcpyRec(dst + 1, src + 1, size - 1);
+}
+
+//renvoyer -1 0 1 selon l'ordre lexicographique
+int StrcmpRec(char * str0, char * str1) {
+	if (*str0 == 0 && *str1 == 0) return 0;
+	if (*str0 == 0) return 1;
+	if (*str1 == 0) return -1;
+	if (*str0 < *str1) return 1;
+	if (*str0 > *str1) return -1;
+	return StrcmpRec(str0+1,str1+1);
+}
+
+//copier str1 a la fin de str0
+//chercher le \0 ( charactere 0 dans str0 )
+// puis copier str1
+void StrcatRec(char * str0, char * str1) {
+	return;
+}
+
+//chercher le char tok dans str et renvoie un pointeur vers la position
+char * StrChrRec(char * str, char tok) {
+	return nullptr;
+}
+
+//chercher la chaine str1 dans str0 et renvoie un pointeur vers la position
+char * StrStrRec(char * str0, char * str1) {
+	return nullptr;
+}
+
 void TestRec() {
-	//int foo = add_4(2, 2);
-	//int foo2 = add_3(3, -2);
+	
+	char dst[150];
+	StrCpyRec(dst, "chene");
+	int i = 0;
 
-	//int foo3 = sub(4, 6);
-	//int foo3 = sub(6, 6);
-	int foo3 = sub(6, 2);
-	//int foo3 = subrec2(8, 2);
-	int foo4 = mul(2, 4);
-	int foo5 = mul(2, -5);
-	int foo6 = mul2(2, -5);
-	int foo7 = div_rec(2 , 5);
-	int foo8 = div_rec(2, -5);
-	int foo9 = div_rec(6, 2);
-	int foo10 = div_rec(-6, 2);
-	int foo11 = div_rec(6, -2);
-	int foo12 = mod_rec2(23, 5);
-	int foo13 = mod_rec2(-33, 10);
-	int foo14 = mod_rec2(20, -3);
+	int szBuf = 32;
+	char * buffer = (char*)malloc(szBuf + 1);
+	buffer[32] = 'X';
+	ZeroMemory(buffer, szBuf);
+	printf("%c", buffer[32]);
 
-	int  i = 0;
+
+	char toto[32];
+	char tata[32]=  "it's me mariooo";
+	MemcpyRec(toto, tata, strlen(tata) + 1);
+	if (toto[0] != tata[0])
+		throw std::exception("hmm?");
+
+	system("pause");
 }
