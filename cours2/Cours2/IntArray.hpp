@@ -116,10 +116,24 @@ public:
 	}
 
 	void sort() {
-
-		IntArray nuSize;
+		IntArray nuData(1,"nudata");
 		for (int i = 0; i < getLength(); i++) {
+			int val = get(i);
+			printf("val: %d\n", val);
 
+			int pos = nuData.searchPosition(val);
+			printf("future pos: %d\n", pos);
+			nuData.insert(nuData.searchPosition(val),val);
+
+			printf("[");
+			for (int j = 0; j < nuData.getLength(); j++)
+				printf("%d ", nuData[j]);
+			printf("]\n");
+			
+		}
+
+		for (int i = 0; i < getLength(); i++) {
+			set(i,nuData.get(i));
 		}
 		//inserer tout les elements au bon endroit un par un
 		//

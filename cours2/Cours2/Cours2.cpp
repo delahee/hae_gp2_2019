@@ -269,6 +269,15 @@ int main(){
 		int  i = 0;
 	}
 
+	{
+		IntArray t;
+		t.fillWithRandom(16);
+		t.sort();
+
+		int o = 0;
+	}
+
+
 	//ici montableau a été détruit
 
     std::cout << "Hello World!\n"; 
