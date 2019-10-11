@@ -15,27 +15,7 @@ public:
 	//membre TEST statique ( qui n'existe que à un seul endroit )
 	static int TEST;
 
-	IntArray( int size , const char * name = ""){
-		//on passe name en std::string
-		//alloue automatiquement un char* et fait la copie
-		this->name = name;
-		printf("construite! %s\n", this->name.c_str());
-
-		//version C old school
-		//data = (int * )malloc(size * sizeof(int));
-		//memset(data,0, size * sizeof(int));
-
-		//version C new school
-		//data = (int * )calloc(size , sizeof(int));
-		//calloc mets des zero
-		if (size == 0) size++;
-		//version c++ plus safe
-		data = new int[size];
-		for (int i = 0; i < size; ++i) data[i] = 0;
-
-		//cursize = 0;
-		maxSize = size;
-	}
+	IntArray(int size=1, const char * name = "");
 
 	~IntArray() {
 		printf("detruite! %s\n", name.c_str());
@@ -52,7 +32,8 @@ public:
 	void set(int pos, int elem) {
 		ensure(pos+1);
 		data[pos] = elem;
-		curSize = pos+1;
+		if (pos >= curSize) 
+			curSize = pos + 1;
 	}
 
 	void set_unsafe(int pos, int elem) {
@@ -60,13 +41,17 @@ public:
 		curSize = pos+1;
 	}
 
-	int operator() ( int pos ) {
+	//attention je ne deplace pas le curseur de taille
+	int & operator() ( int pos ) {
 		ensure(pos+1);
+		if (pos >= curSize) curSize = pos + 1;
 		return data[pos];
 	}
 
+	//attention je ne deplace pas le curseur de taille
 	int & operator[] (int pos) {
 		ensure(pos+1);
+		if (pos >= curSize) curSize = pos + 1;
 		return data[pos];
 	}
 
@@ -74,5 +59,63 @@ public:
 	void push_front(int elem);
 	void insert(int pos, int elem);
 
+	// 0 1 3 
+	// si je cherche 2
+	// 0 1 <2> 3 
+	// renvoie la position apres l'element 1
+	int searchPosition( int element ) {
+		for (int i = 0; i < getLength(); i++)
+			if (element <= data[i])
+				return i;
+		return getLength();
+	}
+
+	void removeAll() {
+		curSize = 0;
+	}
+
+	/**
+	0 1 3 supprime 1 
+	reste 0 3 
+	*/
+	bool remove(int valeur) {
+		int idx = -1;
+		for (int i = 0; i < getLength(); i++) {
+			if (data[i] == valeur) {
+				idx = i;
+				break;
+			}
+		}
+		if (idx == -1) return false;
+		for (int i = idx; i < getLength()-1; i++)
+			data[i] = data[i+1];
+		data[curSize-1] = 0;
+		curSize--;
+	}
+
+	bool remove2(int valeur) {
+		int idx = -1;
+		for (int i = 0; i < getLength(); i++) {
+			if (data[i] == valeur) {
+				for (int j = idx; j < getLength() - 1; j++)
+					data[j] = data[j + 1];
+				data[curSize - 1] = 0;
+				curSize--;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void fillWithRandom(int nbElem) {
+		//supprimer tout
+		//ecrire std::random() dans nbElem cases
+	}
+
+	void sort() {
+		//creer un tableau temporaire
+		//inserer dans l'ordre dans ce nouveau tableau
+		//recuperer ce nouveau tableau et détruire le courant
+	}
 
 };

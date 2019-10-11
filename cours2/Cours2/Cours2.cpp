@@ -202,6 +202,58 @@ int main(){
 
 		int i = 0;
 	}
+
+	{
+		IntArray t(1);
+		t.set(8, 66);
+		assert(t.getLength() == 9);
+	}
+
+	{
+		IntArray t(1);
+		t.set(8, 66);
+		assert(t.getLength() == 9);
+		t.set(2, 67);
+		assert(t.getLength() == 9);
+	}
+
+	{
+		IntArray t(1);
+		assert(t.searchPosition(0) == 0);
+		t.set(0, 5);
+		t.set(1, 6);
+		t.set(2, 10);
+		assert(t.getLength() == 3);
+		assert(t.searchPosition(1) == 0);
+		assert(t.searchPosition(5) == 0);
+		assert(t.searchPosition(6) == 1);
+		assert(t.searchPosition(8) == 2);
+		assert(t.searchPosition(12) == 3);
+		int i = 0;
+	}
+
+	{
+		IntArray t;
+		t[0] = 68;
+		t[1] = 69;
+		t[2] = 70;
+
+		t.remove(t[1]);
+		assert(t[0] == 68);
+		assert(t[1] == 70);
+		int i = 0;
+	}
+
+	{
+		IntArray t;
+		t.insert(t.searchPosition(10),10);
+		t.insert(t.searchPosition(0),0);
+		t.insert(t.searchPosition(8),8);
+		assert(t[0] == 0);
+		assert(t[1] == 8);
+		assert(t[2] == 10);
+	}
+
 	//ici montableau a été détruit
 
     std::cout << "Hello World!\n"; 
