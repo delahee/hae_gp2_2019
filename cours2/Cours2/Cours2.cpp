@@ -4,6 +4,7 @@
 #include "pch.h"
 #include <iostream>
 #include "IntArray.hpp"
+#include <time.h>
 
 
 
@@ -257,6 +258,13 @@ int main(){
 	{
 		IntArray t;
 		t.fillWithRandom(16);
+
+		clock_t cnt = clock();
+		srand( cnt );
+		for (int i = 0; i < t.getLength(); ++i) {
+			int val = std::rand() % 100;
+			t.set(i, val);
+		}
 
 		int  i = 0;
 	}

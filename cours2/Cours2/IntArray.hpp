@@ -117,7 +117,10 @@ public:
 
 	void sort() {
 
-		IntArray nuSize(curSize);
+		IntArray nuSize;
+		for (int i = 0; i < getLength(); i++) {
+
+		}
 		//inserer tout les elements au bon endroit un par un
 		//
 
