@@ -142,8 +142,66 @@ int main(){
 
 	{
 		IntArray * tab1 = new IntArray(16, nameTab1);
+
+		//si on ne fait pas ca, la mémoire a fuit, on a perdu la trace de tab1
+		//delete(tab1);
+		assert( tab1->ensure(8) == false);
+		assert( tab1->ensure(32) == true );
+		delete(tab1);
+		tab1 = nullptr;
 	}
 
+	{
+		IntArray t(16);
+		t.set(0, 8);
+		t.set(3, 66);
+		for (int i = 0; i < t.getLength(); ++i) {
+			printf("t[%d]: %d\n", i,t[i]);
+			//printf("t[%d]: %d\n", i, t(i));
+		}
+
+		t[5] = 8;
+		printf("t[%d]: %d\n", 5, t[5]);
+
+	}
+
+	{
+		IntArray t(6);
+		for (int i = 0; i < 6; i++) {
+			t.set(i, i*i);
+		}
+		t.push_back(5);
+		t.push_front(2);
+	}
+
+	{
+		IntArray t(0);
+		t.push_back(5);
+		t.push_front(2);
+	}
+	{
+		IntArray t(4);
+		for (int i = 0; i < 4; i++) {
+			t.set(i, i*i);
+		}
+		t.insert(2, 1024);
+		int i = 0;
+	}
+
+	{
+		IntArray t(4);
+		assert(t.getLength() == 0);
+		t.insert(0, 77);
+		assert(t.getLength() == 1);
+
+		t.insert(5, 0);
+		assert(t.getLength() == 6);
+
+		t.insert(2, 0);
+		assert(t.getLength() == 7);
+
+		int i = 0;
+	}
 	//ici montableau a été détruit
 
     std::cout << "Hello World!\n"; 

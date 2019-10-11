@@ -28,7 +28,7 @@ public:
 		//version C new school
 		//data = (int * )calloc(size , sizeof(int));
 		//calloc mets des zero
-
+		if (size == 0) size++;
 		//version c++ plus safe
 		data = new int[size];
 		for (int i = 0; i < size; ++i) data[i] = 0;
@@ -40,4 +40,39 @@ public:
 	~IntArray() {
 		printf("detruite! %s\n", name.c_str());
 	}
+
+	bool ensure(int size);
+
+	int getLength();
+
+	int get(int pos) {
+		return data[pos];
+	}
+	
+	void set(int pos, int elem) {
+		ensure(pos+1);
+		data[pos] = elem;
+		curSize = pos+1;
+	}
+
+	void set_unsafe(int pos, int elem) {
+		data[pos] = elem;
+		curSize = pos+1;
+	}
+
+	int operator() ( int pos ) {
+		ensure(pos+1);
+		return data[pos];
+	}
+
+	int & operator[] (int pos) {
+		ensure(pos+1);
+		return data[pos];
+	}
+
+	void push_back(int elem);
+	void push_front(int elem);
+	void insert(int pos, int elem);
+
+
 };
