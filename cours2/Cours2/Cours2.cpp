@@ -252,6 +252,13 @@ int main(){
 		assert(t[0] == 0);
 		assert(t[1] == 8);
 		assert(t[2] == 10);
+	}//on se retrouve avec un tableau trié
+
+	{
+		IntArray t;
+		t.fillWithRandom(16);
+
+		int  i = 0;
 	}
 
 	//ici montableau a été détruit

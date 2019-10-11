@@ -108,11 +108,19 @@ public:
 	}
 
 	void fillWithRandom(int nbElem) {
-		//supprimer tout
-		//ecrire std::random() dans nbElem cases
+		ensure(nbElem);
+		for (int i = 0; i < nbElem; ++i) {
+			int val = std::rand();
+			set(i, val );
+		}
 	}
 
 	void sort() {
+
+		IntArray nuSize(curSize);
+		//inserer tout les elements au bon endroit un par un
+		//
+
 		//creer un tableau temporaire
 		//inserer dans l'ordre dans ce nouveau tableau
 		//recuperer ce nouveau tableau et détruire le courant
