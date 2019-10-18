@@ -155,6 +155,7 @@
     <ClInclude Include="IntArray.hpp" />
     <ClInclude Include="List.hpp" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Tree.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleApplication1.cpp" />
@@ -166,6 +167,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Tree.cpp" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="Util.hpp" />
   </ItemGroup>

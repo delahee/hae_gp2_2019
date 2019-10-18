@@ -7,10 +7,24 @@
 #include "Util.hpp"
 #include "ConsoleApplication1.h"
 #include "List.hpp"
+#include "Tree.hpp"
 
 void assert(bool b) {
 	if (!b) throw std::exception();
 }
+
+void testFloatTree() {
+	FloatTree * tree = new FloatTree();
+	Node<float> * leaf = new FloatNode(8);
+	leaf->insertLeft(4);
+	assert(leaf->left->elem == 4);
+
+	leaf->insertRight(9);
+	assert(leaf->right->elem == 9);
+
+	int k = 0;
+}
+
 
 void testIntlist() {
 	IntList * toto = new IntList(8) ;
@@ -29,16 +43,23 @@ void testIntlist() {
 
 	
 	toto = toto->AddFirst(70);
-	toto->Remove(70);
+	toto = toto->Remove(70);
 	IntList * tata = new IntList(66);
 	tata = tata->Remove(66);
 	assert(tata == nullptr);
-	int k = 0;
+	
 
+
+	bool MRP = toto->Contains(60);
+	assert(MRP == false);
+	bool MRP2 = toto->Contains(65);
+	assert(MRP2 == true);
+	int k = 0;
 }
 
 int main()
 {
+	testFloatTree();
 
 	testIntlist();
 	std::cout << "Hello World!\n"; 

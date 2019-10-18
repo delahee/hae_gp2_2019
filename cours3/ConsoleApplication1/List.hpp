@@ -36,16 +36,6 @@ public:
 
 	//ajoute elem au début de la liste
 	List<Type>* AddFirst(const Type & elem) {
-		// auto toto
-		// toto = [3 5 5]
-		// toto = toto->Concat(4);
-		// toto 4 [3 5 5 ]
-		// toto [4 3 5 5 ]
-
-		//créer un nouvel element de liste
-		//accrocher soit meme au nouvel element
-		//renvoyer le nouvel element
-
 		auto Toto = new List(elem);
 		Toto->next = this;
 		return Toto;
@@ -70,8 +60,19 @@ public:
 		}
 	}
 
-	bool Contains(const Type & elem) {
-
+	bool Contains(const Type & elemATrouver) {
+		if (elem == elemATrouver)
+		{
+			return true;
+		}
+		else if (next == nullptr)
+		{
+			return false;			
+		}
+		else
+		{
+			return next->Contains(elemATrouver);
+		}
 	}
 };
 
