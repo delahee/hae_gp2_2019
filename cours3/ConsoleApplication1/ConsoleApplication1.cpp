@@ -5,12 +5,42 @@
 #include <iostream>
 #include "IntArray.hpp"
 #include "Util.hpp"
+#include "ConsoleApplication1.h"
+#include "List.hpp"
 
 void assert(bool b) {
 	if (!b) throw std::exception();
 }
+
+void testIntlist() {
+	IntList * toto = new IntList(8) ;
+
+	toto->AddLast(65);
+	assert(toto->Length() == 2);
+
+	toto = toto->AddFirst(33);
+	assert(toto->Length() == 3);
+	assert(toto->elem == 33);
+
+	toto = toto->Remove(12);
+	assert(toto->Length() == 3);
+	toto = toto->Remove(33);
+	assert(toto->Length() == 2);
+
+	
+	toto = toto->AddFirst(70);
+	toto->Remove(70);
+	IntList * tata = new IntList(66);
+	tata = tata->Remove(66);
+	assert(tata == nullptr);
+	int k = 0;
+
+}
+
 int main()
 {
+
+	testIntlist();
 	std::cout << "Hello World!\n"; 
 	
 	const int len = 4;
@@ -83,7 +113,9 @@ int main()
 		test[pos++] = 20;
 
 		for (int i = 0; i < 10; ++i) {
-			printf("i:%d  b:%d lin:%d \n", i,test.binarySearch(i), test.searchPosition(i));
+			printf("i:%d  b:%d lin:%d \n", i,
+				test.binarySearch(i), 
+				test.searchPosition(i));
 			assert(test.binarySearch(i) == test.searchPosition(i));
 		}
 		{
