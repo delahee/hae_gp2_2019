@@ -16,6 +16,9 @@ void assert(bool b) {
 void TestIntTree() {
 	IntTree * tree = new IntTree();
 	Node<int> * leaf = new IntNode(8);
+
+	tree->root = leaf;
+
 	leaf->insert(4);
 	//assert(leaf->left->elem == 4);
 
@@ -38,7 +41,22 @@ void TestIntTree() {
 	assert(leaf->Contains(0) == true);
 	leaf->remove(0);
 	assert(leaf->Contains(0) == false);
+
+	for (int i = 0; i < 10; i++) {
+		tree->insert(i * i);
+	}
+	for (int i = 0; i < 10; i++) {
+		tree->insert( - i * i );
+	}
+
+	printf("toto\n");
+	tree->dfsPrint();
+	tree->dfsPrintReversed();
+	tree->bfsPrint();
+	
 	int k = 0;
+
+	
 }
 
 

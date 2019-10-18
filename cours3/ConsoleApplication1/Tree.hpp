@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cstdio>
+#include <functional>
+
 template<typename T>
 class Node {
 public:
@@ -59,6 +62,7 @@ public:
 		}
 		return false;
 	}
+
 	void InsertNode(Node* newBranch) {
 		if (newBranch == nullptr) return;
 		auto r = newBranch->right;
@@ -69,9 +73,6 @@ public:
 		delete newBranch;
 		InsertNode(l);
 		InsertNode(r);
-		//reinserer l'element courant 
-		//rappeller insertnode sur sa branche de gauche 
-		//rappeller insertnode sur sa branche de droite
 	}
 
 	Node* remove(const T & oldElem) {
@@ -104,6 +105,32 @@ public:
 			count += right->getLength();
 		return count;
 	}
+
+	void dfsPrint() {
+		if (left)left->dfsPrint();
+		printf("%d ", elem);
+		if (right)right->dfsPrint();
+	}
+
+	void dfsPrintReversed() {
+		if (right)right->dfsPrintReversed();
+		printf("%d ", elem);
+		if (left)left->dfsPrintReversed();
+	}
+
+	void dfs(std::function<void(Node*)> fun) {
+
+	}
+
+	void bfs(std::function<void(Node*)> fun) {
+
+	}
+
+	void bfsPrint() {
+		printf("%d ", elem);
+		if (left)left->bfsPrint();
+		if (right)right->bfsPrint();
+	}
 };
 
 template<typename T>
@@ -123,17 +150,32 @@ public:
 
 	void insert(const T & newElem) {
 		if (root == nullptr)
-			this->root == new Node(newElem);
+			this->root == new Node<T>(newElem);
 		else
 			root->insert(newElem);
 	}
 
 	void remove(const T & newElem) {
-
+		if (root) root->remove(newElem);
 	}
 
 	int getLength() {
 		return root == nullptr ? 0 : root->getLength();
+	}
+
+	void dfsPrint() {
+		if (root) root->dfsPrint();
+		printf("\n");
+	}
+
+	void dfsPrintReversed() {
+		if (root) root->dfsPrintReversed();
+		printf("\n");
+	}
+
+	void bfsPrint() {
+		if (root) root->bfsPrint();
+		printf("\n");
 	}
 };
 
