@@ -13,15 +13,31 @@ void assert(bool b) {
 	if (!b) throw std::exception();
 }
 
-void testFloatTree() {
-	FloatTree * tree = new FloatTree();
-	Node<float> * leaf = new FloatNode(8);
-	leaf->insertLeft(4);
-	assert(leaf->left->elem == 4);
+void TestIntTree() {
+	IntTree * tree = new IntTree();
+	Node<int> * leaf = new IntNode(8);
+	leaf->insert(4);
+	//assert(leaf->left->elem == 4);
 
-	leaf->insertRight(9);
-	assert(leaf->right->elem == 9);
+	leaf->insert(9);
+	//assert(leaf->right->elem == 9);
 
+	leaf->insert(16);
+	leaf->insert(3);
+	leaf->insert(5);
+	assert(leaf->getLength() == 6);
+	
+	
+	assert(leaf->Contains(16) == true);
+	leaf->remove(16);
+	assert(leaf->Contains(16) == false);
+	assert(leaf->Contains(4) == true);
+	leaf->remove(4);
+	assert(leaf->Contains(4) == false);
+	leaf->insert(0);
+	assert(leaf->Contains(0) == true);
+	leaf->remove(0);
+	assert(leaf->Contains(0) == false);
 	int k = 0;
 }
 
@@ -59,7 +75,7 @@ void testIntlist() {
 
 int main()
 {
-	testFloatTree();
+	TestIntTree();
 
 	testIntlist();
 	std::cout << "Hello World!\n"; 
