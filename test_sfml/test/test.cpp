@@ -14,14 +14,14 @@ int main()
 {
     std::cout << "Hello World!\n"; 
 
-	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
+	sf::RenderWindow * window = new sf::RenderWindow(sf::VideoMode(800, 600), "SFML works!");
 	//sf::CircleShape shape(100.f);
 	//shape.setFillColor(sf::Color::Green);
 
 	sf::Clock	clock;
 
 	sf::Time	appStart = clock.getElapsedTime();
-	while (window.isOpen())
+	while (window->isOpen())
 	{
 		sf::Time now = clock.getElapsedTime();
 		sf::Time dt = appStart - now;
@@ -59,17 +59,16 @@ int main()
 				red));
 		}
 		
-		while (window.pollEvent(event))
+		while (window->pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
-				window.close();
+				window->close();
 		}
 
-		window.clear();
-		window.draw(line);
-
-		window.draw(curve);
-		window.display();
+		window->clear();
+		if(true)window->draw(line);
+		window->draw(curve);
+		window->display();
 	}
 
 	return 0;
