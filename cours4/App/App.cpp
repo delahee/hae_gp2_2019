@@ -9,6 +9,66 @@
 
 using namespace sf;
 
+float lerp(float a, float b, float r) {
+	return a + (b - a) * r;
+}
+
+float rd() {
+	return 1.0 * rand() / RAND_MAX;
+}
+
+void drawCurve(sf::RenderWindow &win, float now) {
+	sf::VertexArray va(sf::LineStrip);
+	sf::Color red = sf::Color::Red;
+	sf::Color blue = sf::Color::Blue;
+	int nb = 16;
+	float stride = 1280.0 / nb;
+	
+	int ofsX = 0;
+	if (fmodf(now, 2.0) <= 1) {
+		red.a = 0;
+	}
+
+	for (int i = 0; i < nb+1; ++i) {
+		double ratio = 1.0 * i / nb;
+		double x = ofsX + stride * i;
+		double y = 400;
+
+		//y += (ratio*ratio*1.33)* sin( ratio * now * 8.0) * 256 + rd() * 8;
+
+		//x = 500 + cos(ratio * 2 * 3.141569) * (now * 20);
+		//y = 500 + sin(ratio * 2 * 3.141569) * ( now * 20);
+
+		//x = 500 + cos(ratio * 2 * 3.141569) * ( now * now * 20 * (0.5 + rd() * 0.5));
+		//y = 500 + sin(ratio * 2 * 3.141569) * (now * now * 20 * (0.5 + rd() * 0.5));
+
+		//y += sin(now) * 200;
+		//y += ratio * ratio * sin(ratio * 8.0 + now) * 256;
+
+		y += sin(ratio * 8.0 + now * 3) * 120;
+
+			//y += sin(ratio * 8.0 + now) * (128 * 1.0 + cos(now*16) * 4);
+
+			/*
+			int radius = 160;
+			x = 500 + radius * cos( ratio * 2 * 3.141569) + sin(now*10 * cos(ratio)) * 8 * (1.0 + rd() * 100);
+			y = 500 + radius * sin( ratio * 2 * 3.141569) + cos(now * 10 * sin(ratio)) * 10 * (1.0 + rd() * 100);
+			*/
+			/*
+		sf::Color c = sf::Color(
+			lerp(blue.r, red.r,ratio),
+			lerp(blue.g, red.g, ratio),
+			lerp(blue.b, red.b, ratio)
+		);
+		*/
+		sf::Color c = i % 2 ? red : blue;
+
+		sf::Vertex vertex(Vector2f(x,y), c);
+		va.append(vertex);
+	}
+	win.draw(va);
+}
+
 int main()
 {
     std::cout << "Hello World!\n"; 
@@ -17,12 +77,13 @@ int main()
 	settings.antialiasingLevel = 2;
 	
 	sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML works!", sf::Style::Default, settings);
+	window.setVerticalSyncEnabled(false);
+
 	sf::CircleShape shape(100.f, (int) (2 * 3.141569 * 100));
 	shape.setPosition(30, 30);
 	shape.setFillColor(sf::Color(0xE884D4ff) );
 	shape.setOutlineThickness(4);
 	shape.setOutlineColor(sf::Color(0xFF8A70ff));
-	window.setVerticalSyncEnabled(true);
 
 	sf::Clock clock;
 
@@ -33,7 +94,6 @@ int main()
 	float fps[4] = { 0.f,0.f,0.f,0.f };
 	int step = 0;
 	sf::Font * font = new sf::Font();
-	MemFile f;
 	if (font->loadFromFile("res/DejaVuSans.ttf") == false) {
 		printf("no such font\n");
 	}
@@ -44,8 +104,7 @@ int main()
 	{
 		sf::Event event;//recup les evenement clavier/pad
 		frameStart = clock.getElapsedTime();
-		while (window.pollEvent(event))
-		{
+		while (window.pollEvent(event))	{
 			switch (event.type ) {
 				case sf::Event::KeyReleased :
 
@@ -77,6 +136,9 @@ int main()
 		every--;
 
 		window.clear();//nettoie la frame
+
+		drawCurve(window, clock.getElapsedTime().asSeconds() );
+
 		window.draw(shape);//on demande le dessin d' une forme
 		window.draw(myFpsCounter);
 		window.display();//ca dessine et ca attend la vsync
