@@ -108,15 +108,19 @@ void drawCatmull(sf::RenderWindow &win, float now) {
 	sf::Color blue = sf::Color::Blue;
 	int nb = 320;
 	float stride = 1280.0 / nb;
-
 	std::vector<Vector2f> points;
 
-	for (int j = 0; j < 8; ++j) {
-		Vector2f v (j * 100, j * 100);
-		if (j == 0)v.x += 100;
-		if (j == 3)v.x += 200;
-		points.push_back(v);
-	}
+	points.push_back(Vector2f(0,0));
+	points.push_back(Vector2f(80, 150));
+	points.push_back(Vector2f(600, 300));
+	points.push_back(Vector2f(100, 600));
+	points.push_back(Vector2f(1280, 720));
+
+
+	sf::CircleShape shape(16, (int)(2 * 3.141569 * 100));
+	shape.setOrigin(Vector2f(16, 16));
+	shape.setPosition(0, 0);
+	shape.setFillColor(sf::Color(0xE884D4ff));
 
 	for (int i = 0; i < nb + 1; ++i) {
 		double ratio = 1.0 * i / nb;
@@ -127,11 +131,18 @@ void drawCatmull(sf::RenderWindow &win, float now) {
 		Vector2f pos = Lib::plot2(ratio, points);
 		x = pos.x;
 		y = pos.y;
-
+		
 		sf::Vertex vertex(Vector2f(x, y), c);
 		va.append(vertex);
 	}
+
+	float cRatio = ( fmodf(now , 2.0f) / 2.0f);
+	Vector2f pos = Lib::plot2(cRatio, points);
+	shape.setPosition(pos);
+
+
 	win.draw(va);
+	win.draw(shape);
 }
 
 int main()
