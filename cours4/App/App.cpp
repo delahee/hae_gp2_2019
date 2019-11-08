@@ -136,10 +136,16 @@ void drawCatmull(sf::RenderWindow &win, float now) {
 		va.append(vertex);
 	}
 
-	float cRatio = ( fmodf(now , 2.0f) / 2.0f);
-	Vector2f pos = Lib::plot2(cRatio, points);
+	static float cRatio = 0.0;
+	static bool autoreverse = false;
+	Vector2f pos = Lib::plot2(autoreverse? cRatio: (1- cRatio), points);
 	shape.setPosition(pos);
 
+	cRatio += 0.001;
+	if (cRatio > 1.0) {
+		cRatio = 0.0;
+		autoreverse = !autoreverse;
+	}
 
 	win.draw(va);
 	win.draw(shape);
