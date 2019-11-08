@@ -17,11 +17,42 @@ float rd() {
 	return 1.0 * rand() / RAND_MAX;
 }
 
+//// hue: 0-360°; sat: 0.f-1.f; val: 0.f-1.f 
+sf::Color hsv(int hue, float sat, float val)
+{
+	hue %= 360;
+	while (hue < 0) hue += 360;
+
+	if (sat < 0.f) sat = 0.f;
+	if (sat > 1.f) sat = 1.f;
+
+	if (val < 0.f) val = 0.f;
+	if (val > 1.f) val = 1.f;
+
+	int h = hue / 60;
+	float f = float(hue) / 60 - h;
+	float p = val * (1.f - sat);
+	float q = val * (1.f - sat * f);
+	float t = val * (1.f - sat * (1 - f));
+
+	switch (h)
+	{
+		default:
+		case 0:
+		case 6: return sf::Color(val * 255, t * 255, p * 255);
+		case 1: return sf::Color(q * 255, val * 255, p * 255);
+		case 2: return sf::Color(p * 255, val * 255, t * 255);
+		case 3: return sf::Color(p * 255, q * 255, val * 255);
+		case 4: return sf::Color(t * 255, p * 255, val * 255);
+		case 5: return sf::Color(val * 255, p * 255, q * 255);
+	}
+}
+
 void drawCurve(sf::RenderWindow &win, float now) {
 	sf::VertexArray va(sf::LineStrip);
 	sf::Color red = sf::Color::Red;
 	sf::Color blue = sf::Color::Blue;
-	int nb = 16;
+	int nb = 320;
 	float stride = 1280.0 / nb;
 	
 	int ofsX = 0;
@@ -45,7 +76,7 @@ void drawCurve(sf::RenderWindow &win, float now) {
 		//y += sin(now) * 200;
 		//y += ratio * ratio * sin(ratio * 8.0 + now) * 256;
 
-		y += sin(ratio * 8.0 + now * 3) * 120;
+		y += sin(ratio * 8.0 + now * 1.5) * 120;
 
 			//y += sin(ratio * 8.0 + now) * (128 * 1.0 + cos(now*16) * 4);
 
@@ -61,7 +92,9 @@ void drawCurve(sf::RenderWindow &win, float now) {
 			lerp(blue.b, red.b, ratio)
 		);
 		*/
-		sf::Color c = i % 2 ? red : blue;
+		//sf::Color c = i % 2 ? red : blue;
+
+		sf::Color c = hsv(ratio * 360, 0.8, 0.8);
 
 		sf::Vertex vertex(Vector2f(x,y), c);
 		va.append(vertex);
