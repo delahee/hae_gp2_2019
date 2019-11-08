@@ -111,9 +111,9 @@ void drawCatmull(sf::RenderWindow &win, float now) {
 
 	std::vector<Vector2f> points;
 
-	points.push_back(Vector2f(50, 50));
-	points.push_back(Vector2f(150, 50));
-	points.push_back(Vector2f(400, 400));
+	for (int j = 0; j < 8; ++j) {
+		points.push_back(Vector2f(j*50 + rd() * 20, j*50 + rd() * 20));
+	}
 
 	for (int i = 0; i < nb + 1; ++i) {
 		double ratio = 1.0 * i / nb;
@@ -199,7 +199,7 @@ int main()
 		//drawCurve(window, clock.getElapsedTime().asSeconds() );
 		drawCatmull(window, clock.getElapsedTime().asSeconds());
 
-		window.draw(shape);//on demande le dessin d' une forme
+		//window.draw(shape);//on demande le dessin d' une forme
 		window.draw(myFpsCounter);
 		window.display();//ca dessine et ca attend la vsync
 
