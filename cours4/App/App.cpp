@@ -6,6 +6,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <direct.h>
+#include <functional>
 
 using namespace sf;
 
@@ -154,7 +155,7 @@ void drawCatmull(sf::RenderWindow &win, float now) {
 	Vector2f pos = Lib::plot2(autoreverse? cRatio: (1- cRatio), points);
 	shape.setPosition(pos);
 
-	cRatio += 0.001;
+	cRatio += 0.001f;
 	if (cRatio > 1.0) {
 		cRatio = 0.0;
 		autoreverse = !autoreverse;
@@ -164,6 +165,77 @@ void drawCatmull(sf::RenderWindow &win, float now) {
 	win.draw(shape);
 }
 
+static RectangleShape	* sh=nullptr;
+static Vector2f			shPos;
+static Vector2f			shDir;
+
+static RectangleShape	* shTarget = nullptr;
+
+static int shSize = 48;
+static void initMovingSquare() {
+	sh = new RectangleShape(Vector2f(shSize, shSize));
+	sh->setPosition(shPos.x = 400, shPos.y = 400);
+	sh->setOrigin(shSize >> 1, shSize >> 1);
+	sh->setFillColor(Color(0x55B87Eff));
+	sh->setOutlineColor(Color(0xB34139ff));
+
+	shTarget = new RectangleShape(Vector2f(shSize *1.5, 4));
+	shTarget->setOrigin(0, 2);
+	shTarget->setFillColor(Color(0xB34139ff));
+
+}
+
+static void drawMovingSquare(sf::RenderWindow& win) {
+	win.draw(*sh);
+
+	Vector2i mpos = sf::Mouse::getPosition(win);
+	shTarget->setPosition(sh->getPosition());
+	float angle = atan2f(mpos.y - sh->getPosition().y, mpos.x - sh->getPosition().x) / (2 * 3.141569) * 360;
+	shTarget->setRotation(angle);
+
+	shDir.x = mpos.x - sh->getPosition().x;
+	shDir.y = mpos.y - sh->getPosition().y;
+
+	win.draw(*shTarget);
+}
+
+
+
+
+class Particle {
+public:
+
+	sf::Shape * spr;
+	Vector2f dir;
+
+	int life = 100;
+	bool killed = false;
+
+	std::function<void(Particle*)> bhv;
+
+	Particle( sf::Shape * spr ) {
+		this->spr = spr;
+		dir.y = 1;
+	}
+
+	~Particle() {
+		delete(spr);
+		spr = nullptr;
+	}
+
+	void update() {
+		if (bhv) {
+			bhv(this);
+		}
+		life--;
+		if (life == 0) killed = true;
+	}
+
+	void draw(RenderWindow & win) {
+		win.draw(*spr);
+	}
+};
+
 int main()
 {
     std::cout << "Hello World!\n"; 
@@ -171,8 +243,10 @@ int main()
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 2;
 	
+	
 	sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML works!", sf::Style::Default, settings);
-	window.setVerticalSyncEnabled(false);
+	window.setVerticalSyncEnabled(true);
+	
 
 	sf::CircleShape shape(100.f, (int) (2 * 3.141569 * 100));
 	shape.setPosition(30, 30);
@@ -193,6 +267,10 @@ int main()
 		printf("no such font\n");
 	}
 
+	std::vector< Particle * > vec;
+
+	initMovingSquare();
+
 	sf::Text myFpsCounter;
 	int every = 0;
 	while (window.isOpen())//on passe tout le temps DEBUT DE LA FRAME 
@@ -209,19 +287,71 @@ int main()
 					break;
 
 				case sf::Event::KeyPressed:
-					if (event.key.code == sf::Keyboard::F1) mousePos[0] = sf::Vector2f(sf::Mouse::getPosition(window));
-					if (event.key.code == sf::Keyboard::F2) mousePos[1] = sf::Vector2f(sf::Mouse::getPosition(window));
-					if (event.key.code == sf::Keyboard::F3) mousePos[2] = sf::Vector2f(sf::Mouse::getPosition(window));
-					if (event.key.code == sf::Keyboard::F4) mousePos[3] = sf::Vector2f(sf::Mouse::getPosition(window));
+					{
+						if (event.key.code == sf::Keyboard::F1) mousePos[0] = sf::Vector2f(sf::Mouse::getPosition(window));
+						if (event.key.code == sf::Keyboard::F2) mousePos[1] = sf::Vector2f(sf::Mouse::getPosition(window));
+						if (event.key.code == sf::Keyboard::F3) mousePos[2] = sf::Vector2f(sf::Mouse::getPosition(window));
+						if (event.key.code == sf::Keyboard::F4) mousePos[3] = sf::Vector2f(sf::Mouse::getPosition(window));
+
+						
+					}
 					break;
 
 				case sf::Event::Closed:
 					window.close();
 					break;
+
 				default:
 					break;
 			}
 		}
+
+		const int squareSpeed = 3;
+
+		
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))			{ 
+			shPos.x -= squareSpeed;  
+			shDir.x = -1; 
+			shDir.y = 0; 
+		}
+		else if (sf::Keyboard::isKeyPressed( sf::Keyboard::Right))		{ 
+			shPos.x += squareSpeed;  
+			shDir.x = 1; 
+			shDir.y = 0;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+			shPos.y -= squareSpeed;  
+			shDir.x = 0;  
+			shDir.y = -1; 
+		}
+		else if (sf::Keyboard::isKeyPressed( sf::Keyboard::Down))		{
+			shPos.y += squareSpeed;  
+			shDir.x = 0;
+			shDir.y = 1; 
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+			if (shDir.x == 0 && shDir.y == 0) shDir.y = 1;
+
+			RectangleShape * pr = new RectangleShape(Vector2f(8,8));
+			pr->setFillColor(Color(0xB34139ff));
+			pr->setOrigin(4, 4);
+			pr->setPosition(sh->getPosition());
+			Particle * p = new Particle(pr);
+
+			float shDirLen = sqrt(shDir.x*shDir.x + shDir.y*shDir.y);
+			p->dir.x = shDir.x/ shDirLen;
+			p->dir.y = shDir.y / shDirLen;
+			p->bhv = [](Particle * part) {
+				Vector2f ppos = part->spr->getPosition();
+				ppos.x += part->dir.x*6;
+				ppos.y += part->dir.y*6;
+				part->spr->setPosition(ppos);
+			};
+			vec.push_back(p);
+		}
+		sh->setPosition(shPos);
+
 		
 		myFpsCounter.setPosition(8, 8);
 		myFpsCounter.setFillColor(sf::Color::Red);
@@ -233,13 +363,27 @@ int main()
 		}
 		every--;
 
-		window.clear();//nettoie la frame
+		window.clear( sf::Color(0x9EFFC6ff));//nettoie la frame
 
+		drawMovingSquare( window );
+		
 		//drawCurve(window, clock.getElapsedTime().asSeconds() );
-		drawCatmull(window, clock.getElapsedTime().asSeconds());
+		//drawCatmull(window, clock.getElapsedTime().asSeconds());
 
 		//window.draw(shape);//on demande le dessin d' une forme
 		window.draw(myFpsCounter);
+
+		for (int k = 0; k < (int)vec.size(); k++) {
+			Particle * p = vec[vec.size() - k - 1];
+			p->update();
+			if (p->killed) {
+				vec.erase(vec.begin()+k);
+			}
+			else {
+				p->draw(window);
+			}
+		}
+
 		window.display();//ca dessine et ca attend la vsync
 
 		fps[step % 4] = 1.0f / (frameStart - prevFrameStart).asSeconds();
