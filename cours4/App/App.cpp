@@ -9,6 +9,15 @@
 
 using namespace sf;
 
+
+
+static Vector2f mousePos[4] = {
+	Vector2f(0,0),
+	Vector2f(100,100),
+	Vector2f(200,200),
+	Vector2f(300,800)
+};
+
 float lerp(float a, float b, float r) {
 	return a + (b - a) * r;
 }
@@ -110,12 +119,16 @@ void drawCatmull(sf::RenderWindow &win, float now) {
 	float stride = 1280.0 / nb;
 	std::vector<Vector2f> points;
 
+	/*
 	points.push_back(Vector2f(0,0));
 	points.push_back(Vector2f(80, 150));
 	points.push_back(Vector2f(600, 300));
 	points.push_back(Vector2f(100, 600));
 	points.push_back(Vector2f(1280, 720));
-
+	*/
+	for (int i = 0; i < 4; i++) {
+		points.push_back( mousePos[i] );
+	}
 
 	sf::CircleShape shape(16, (int)(2 * 3.141569 * 100));
 	shape.setOrigin(Vector2f(16, 16));
@@ -195,6 +208,12 @@ int main()
 						printf("fps %f\n", 0.25f*(fps[0] + fps[1] + fps[2] + fps[3]) );
 					break;
 
+				case sf::Event::KeyPressed:
+					if (event.key.code == sf::Keyboard::F1) mousePos[0] = sf::Vector2f(sf::Mouse::getPosition(window));
+					if (event.key.code == sf::Keyboard::F2) mousePos[1] = sf::Vector2f(sf::Mouse::getPosition(window));
+					if (event.key.code == sf::Keyboard::F3) mousePos[2] = sf::Vector2f(sf::Mouse::getPosition(window));
+					if (event.key.code == sf::Keyboard::F4) mousePos[3] = sf::Vector2f(sf::Mouse::getPosition(window));
+					break;
 
 				case sf::Event::Closed:
 					window.close();
