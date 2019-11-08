@@ -18,6 +18,7 @@ int main()
 	
 	sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML works!", sf::Style::Default, settings);
 	sf::CircleShape shape(100.f, (int) (2 * 3.141569 * 100));
+	shape.setPosition(30, 30);
 	shape.setFillColor(sf::Color(0xE884D4ff) );
 	shape.setOutlineThickness(4);
 	shape.setOutlineColor(sf::Color(0xFF8A70ff));
@@ -31,29 +32,14 @@ int main()
 
 	float fps[4] = { 0.f,0.f,0.f,0.f };
 	int step = 0;
-
-	char fpsLabel[1024];
-	memset(fpsLabel, 0, 1024);
-
 	sf::Font * font = new sf::Font();
-
-
-	char tempLabel[512];
-	_getcwd(tempLabel, 512);
-
 	MemFile f;
-
-	bool ok = Lib::loadFile("res/DejaVuSans.ttf", f);
-	if (!ok) {
-		printf("err file");
-		return 0;
-	}
-	
-	if ( font->loadFromMemory(f.data,f.size) == false) {
+	if (font->loadFromFile("res/DejaVuSans.ttf") == false) {
 		printf("no such font\n");
 	}
 
 	sf::Text myFpsCounter;
+	int every = 0;
 	while (window.isOpen())//on passe tout le temps DEBUT DE LA FRAME 
 	{
 		sf::Event event;//recup les evenement clavier/pad
@@ -79,18 +65,19 @@ int main()
 					break;
 			}
 		}
-
 		
-		//sprintf_s(fpsLabel, "FPS: %f", fps[(step - 1) % 4]);
-
-		myFpsCounter.setPosition(50, 50);
+		myFpsCounter.setPosition(8, 8);
 		myFpsCounter.setFillColor(sf::Color::Red);
-
 		myFpsCounter.setFont(*font);
-		myFpsCounter.setString("toto");
-		
+
+		if (every == 0) {
+			myFpsCounter.setString(std::string("FPS:") + std::to_string(fps[(step - 1) % 4]));
+			every = 30;
+		}
+		every--;
+
 		window.clear();//nettoie la frame
-		//window.draw(shape);//on demande le dessin d' une forme
+		window.draw(shape);//on demande le dessin d' une forme
 		window.draw(myFpsCounter);
 		window.display();//ca dessine et ca attend la vsync
 
