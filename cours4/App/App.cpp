@@ -102,6 +102,35 @@ void drawCurve(sf::RenderWindow &win, float now) {
 	win.draw(va);
 }
 
+void drawCatmull(sf::RenderWindow &win, float now) {
+	sf::VertexArray va(sf::LineStrip);
+	sf::Color red = sf::Color::Red;
+	sf::Color blue = sf::Color::Blue;
+	int nb = 320;
+	float stride = 1280.0 / nb;
+
+	std::vector<Vector2f> points;
+
+	points.push_back(Vector2f(50, 50));
+	points.push_back(Vector2f(150, 50));
+	points.push_back(Vector2f(400, 400));
+
+	for (int i = 0; i < nb + 1; ++i) {
+		double ratio = 1.0 * i / nb;
+		double x = 0.0;
+		double y = 0.0;
+		sf::Color c = hsv(ratio * 360, 0.8, 0.8);
+
+		Vector2f pos = Lib::plot2(ratio, points);
+		x = pos.x;
+		y = pos.y;
+
+		sf::Vertex vertex(Vector2f(x, y), c);
+		va.append(vertex);
+	}
+	win.draw(va);
+}
+
 int main()
 {
     std::cout << "Hello World!\n"; 
@@ -139,14 +168,11 @@ int main()
 		frameStart = clock.getElapsedTime();
 		while (window.pollEvent(event))	{
 			switch (event.type ) {
-				case sf::Event::KeyReleased :
-
+				case sf::Event::KeyReleased:
 					if (event.key.code == sf::Keyboard::I)
 						printf("instant fps %f\n", fps[(step-1)%4]);
-
 					if (event.key.code == sf::Keyboard::F)
 						printf("fps %f\n", 0.25f*(fps[0] + fps[1] + fps[2] + fps[3]) );
-					
 					break;
 
 
@@ -170,7 +196,8 @@ int main()
 
 		window.clear();//nettoie la frame
 
-		drawCurve(window, clock.getElapsedTime().asSeconds() );
+		//drawCurve(window, clock.getElapsedTime().asSeconds() );
+		drawCatmull(window, clock.getElapsedTime().asSeconds());
 
 		window.draw(shape);//on demande le dessin d' une forme
 		window.draw(myFpsCounter);

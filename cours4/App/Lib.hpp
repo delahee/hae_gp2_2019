@@ -2,6 +2,10 @@
 
 #include <string>
 #include <vector>
+#include <SFML/Graphics.hpp>
+
+using namespace sf;
+
 struct MemFile {
 	char *		data;
 	int			size;
@@ -25,29 +29,27 @@ public:
 		q += (-p0 + 3.0f * p1 - 3 * p2 + p3) 		* t2 * t;
 
 		return 0.5f * q;
-	}
+	};
 
-	static float get(int idx, const std::vector<float> & points) {
+	static Vector2f get(int idx, const std::vector<Vector2f> & points) {
 		if (idx < 0)idx = 0;
 		if (idx >= (int)points.size()) idx = (int)points.size() - 1;
 		return points[idx];
-	}
+	};
 
-	static float c1(float i, const std::vector<float> & points) {
+	static sf::Vector2f c2(float i, const std::vector<sf::Vector2f> & points) {
 		auto p0 = get((int)(i - 1), points);
 		auto p1 = get((int)(i), points);
 		auto p2 = get((int)(i + 1), points);
 		auto p3 = get((int)(i + 2), points);
 
-		float t = i - (int)i;
-		float res = catmull(p0, p1, p2, p3, t);
-		return res;
-	}
+		auto t = i - (int)i;
+		auto resX = catmull(p0.x, p1.x, p2.x, p3.x, t);
+		auto resY = catmull(p0.y, p1.y, p2.y, p3.y, t);
+		return Vector2f( resX,resY);
+	};
 
-	/**
-	* t is [0...1]
-	*/
-	static float plot(float t, const std::vector<float> & points) {
-		return c1(t * (points.size() - 1), points);
+	static Vector2f plot2(float t, const std::vector<Vector2f> & points) {
+		return c2(t * (points.size() - 1), points);
 	}
 };
