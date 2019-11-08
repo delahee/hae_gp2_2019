@@ -112,7 +112,10 @@ void drawCatmull(sf::RenderWindow &win, float now) {
 	std::vector<Vector2f> points;
 
 	for (int j = 0; j < 8; ++j) {
-		points.push_back(Vector2f(j*50 + rd() * 20, j*50 + rd() * 20));
+		Vector2f v (j * 100, j * 100);
+		if (j == 0)v.x += 100;
+		if (j == 3)v.x += 200;
+		points.push_back(v);
 	}
 
 	for (int i = 0; i < nb + 1; ++i) {
