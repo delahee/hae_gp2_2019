@@ -61,8 +61,9 @@ public:
 	}
 
 	static inline float rd() {
-		return 1.0 * rand() / RAND_MAX;
+		return 1.0f * rand() / RAND_MAX;
 	}
 
 	static void m_gaussian_kernel(float * dest, int size, float radius);
+
 };

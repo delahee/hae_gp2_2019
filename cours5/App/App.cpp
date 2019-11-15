@@ -9,6 +9,9 @@
 #include <direct.h>
 #include <functional>
 
+#include <imgui-SFML.h>
+#include <imgui.h>
+
 using namespace sf;
 
 static sf::Shader * simpleShader = nullptr;
@@ -47,7 +50,7 @@ static void getKernelOffsets( float dx, std::vector<float> & _kernel, std::vecto
 	Lib::m_gaussian_kernel(_kernel.data(), kernel_size, dx);
 
 	for (int i = 0; i < kernel_size; i++) {
-		float ofs = (offsetScale * (i - kernel_size * 0.5));
+		float ofs = (offsetScale * (i - kernel_size * 0.5f));
 		_offsets[i].x = isHoriz ? ofs : 0.0f;
 		_offsets[i].y = isHoriz ? 0.0f : ofs;
 	}
@@ -131,8 +134,11 @@ int main() {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 2;
 	
-	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML works!", sf::Style::Default, settings);
+	sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML works!", sf::Style::Default, settings);
 	window.setVerticalSyncEnabled(true);
+
+
+	ImGui::SFML::Init(window);
 
 	bloomPass = new sf::Texture();
 	bloomPass->create(window.getSize().x, window.getSize().y);
@@ -201,12 +207,20 @@ int main() {
 	sf::Texture winTex;
 	winTex.create(window.getSize().x, window.getSize().y);
 
+	sf::Clock deltaClock;
+
+	sf::Color bgColor(7,15,33);
+	char windowTitle[256] = "maWindow";
+	float color[3] = { bgColor.r/255.0f, bgColor.g / 255.0f, bgColor.b / 255.0f };
 
 	while (window.isOpen())//on passe tout le temps DEBUT DE LA FRAME 
 	{
 		sf::Event event;//recup les evenement clavier/pad
 		frameStart = clock.getElapsedTime();
 		while (window.pollEvent(event))	{
+
+			ImGui::SFML::ProcessEvent(event);
+
 			switch (event.type ) {
 				case sf::Event::KeyReleased:
 					
@@ -227,6 +241,9 @@ int main() {
 			}
 		}
 
+		ImGui::SFML::Update(window, deltaClock.restart());
+
+
 		const int squareSpeed = 3;
 
 		
@@ -240,7 +257,29 @@ int main() {
 		}
 		every--;
 
-		window.clear( sf::Color(0x00080f00));//nettoie la frame
+		ImGui::Begin("Sample window"); // begin window
+
+		// Background color edit
+		if (ImGui::ColorEdit3("Background color", color)) {
+			// this code gets called if color value changes, so
+			// the background color is upgraded automatically!
+			bgColor.r = static_cast<sf::Uint8>(color[0] * 255.f);
+			bgColor.g = static_cast<sf::Uint8>(color[1] * 255.f);
+			bgColor.b = static_cast<sf::Uint8>(color[2] * 255.f);
+		}
+
+		// Window title text edit
+		ImGui::InputText("Window title", windowTitle, 255);
+
+		if (ImGui::Button("Update window title")) {
+			// this code gets if user clicks on the button
+			// yes, you could have written if(ImGui::InputText(...))
+			// but I do this to show how buttons work :)
+			window.setTitle(windowTitle);
+		}
+		ImGui::End(); // end window
+
+		window.clear( bgColor );//nettoie la frame
 		window.draw(myFpsCounter);
 
 		for (int k = 0; k < (int)vec.size(); k++) {
@@ -254,13 +293,6 @@ int main() {
 			}
 		}
 
-		sf::RectangleShape rsh;
-
-		rsh.setFillColor(sf::Color(0xff00ffff));
-		rsh.setSize(Vector2f(32, 32));
-		rsh.setPosition(16, 50);
-
-		window.draw(rsh);
 
 		bloomPass->update(window);
 
@@ -270,8 +302,8 @@ int main() {
 			auto c = 2 + Lib::rd()*Lib::rd() * 2;
 			sf::CircleShape shape(c, (int)(2 * 3.141569 * c));
 			shape.setOrigin(Vector2f(c, c));
-			shape.setPosition(Lib::rd() * 1920, Lib::rd() * 1080);
-			sf::Color col = Lib::hsv( 190 + Lib::rd() * 30, 15.0/100.0 + Lib::rd() * 0.05, 90.0/100.0 + Lib::rd() * 0.1);
+			shape.setPosition( 32 + Lib::rd() * 1920, Lib::rd() * 1080);
+			sf::Color col = Lib::hsv( 190 + (int)(Lib::rd() * 30), 15.0/100.0 + Lib::rd() * 0.05, 95.0/100.0 + Lib::rd() * 0.1);
 			shape.setFillColor(col);
 			shape.setTexture(&whiteTex);
 			window.draw(shape);
@@ -281,8 +313,20 @@ int main() {
 			auto c = 12 + Lib::rd()*Lib::rd() * 250;
 			sf::CircleShape shape(c, (int)(2 * 3.141569 * c));
 			shape.setOrigin(Vector2f(c, c));
-			shape.setPosition(Lib::rd()  * 1920, Lib::rd() * 1080);
-			shape.setFillColor(Lib::hsv(Lib::rd() *360.0, 0.9 + Lib::rd() * 0.01, 0.9 + Lib::rd() * 0.01));
+			shape.setPosition(32 + Lib::rd()  * 1920, Lib::rd() * 1080);
+			shape.setFillColor(Lib::hsv(Lib::rd() *360.0, 0.9 + Lib::rd() * 0.01, 0.95 + Lib::rd() * 0.01));
+			shape.setTexture(&whiteTex);
+			window.draw(shape);
+		}
+
+		//draw palette
+		if(false)
+		for (int i = 0; i < 16; ++i) {
+			int c = 32;
+			sf::RectangleShape shape(Vector2f(c,c));
+			shape.setPosition( c*2 * i + c * 0.5, 16);
+			sf::Color col = Lib::hsv( (360.0 / 16) * i,0.9,0.9);
+			shape.setFillColor(col);
 			shape.setTexture(&whiteTex);
 			window.draw(shape);
 		}
@@ -335,7 +379,7 @@ int main() {
 
 			rs.shader = bloomShader;
 			sf::Color c = sp.getColor();
-			c.a *= 0.9;
+			c.a =(int)(c.a* 0.9);
 			sp.setColor(c);
 
 			window.draw(sp,rs);
@@ -345,6 +389,7 @@ int main() {
 				blurWidth = 54;
 		}
 		
+		ImGui::SFML::Render(window);
 		window.display();//ca dessine et ca attend la vsync
 
 		fps[step % 4] = 1.0f / (frameStart - prevFrameStart).asSeconds();
@@ -352,6 +397,8 @@ int main() {
 
 		step++;
 	}
+
+	ImGui::SFML::Shutdown();
 
 	return 0;
 }
