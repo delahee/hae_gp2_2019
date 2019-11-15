@@ -56,37 +56,7 @@ static void getKernelOffsets( float dx, std::vector<float> & _kernel, std::vecto
 	}
 }
 
-
-static void blurX(float dx, sf::Texture* source, sf::Shader*_blurShader, sf::RenderTexture * destX) {
-	source->setRepeated(true);
-	destX->setRepeated(true);
-	source->setSmooth(true);
-	destX->setSmooth(true);
-	{
-		//blur the x
-		_blurShader->setUniform("texture", *source);
-
-		sf::Sprite sprX(*source);
-		
-		getKernelOffsets(dx, kernelX, offsetsX);
-
-		int nbSamples = kernelX.size();
-		_blurShader->setUniform("samples", nbSamples);
-		for (int i = 0; i < nbSamples; i++)
-			offsetsX[i].x *= 1.0f / source->getSize().x;
-		_blurShader->setUniformArray("kernel", kernelX.data(), nbSamples);
-		_blurShader->setUniformArray("offsets", offsetsX.data(), nbSamples);
-		
-		destX->draw(sprX, blurShader);
-		destX->display();
-	}
-}
-
-
 static void blur(float dx, sf::Texture* source, sf::Shader*_blurShader, sf::RenderTexture * destX, sf::RenderTexture * destFinal ) {
-	source->setRepeated(true);
-	destX->setRepeated(true);
-	destFinal->setRepeated(true);
 
 	source->setSmooth(true);
 	destX->setSmooth(true);
@@ -127,8 +97,16 @@ static void blur(float dx, sf::Texture* source, sf::Shader*_blurShader, sf::Rend
 	
 }
 
+static Vector2f getContacgettNormal(Vector2f segmentIn[2], Vector2f segmentWall[2]) {
 
-sf::Texture * bloomPass = nullptr;
+
+}
+
+static Vector2f getContactNormal( Vector2f segment[2], sf::Rect<float> rect ) {
+
+
+}
+
 int main() {
 
 	sf::ContextSettings settings;
@@ -139,9 +117,6 @@ int main() {
 
 
 	ImGui::SFML::Init(window);
-
-	bloomPass = new sf::Texture();
-	bloomPass->create(window.getSize().x, window.getSize().y);
 
 	sf::Clock clock;
 
@@ -241,12 +216,14 @@ int main() {
 			}
 		}
 
-		ImGui::SFML::Update(window, deltaClock.restart());
+		sf::RectangleShape sh(Vector2f(32, 32));
+		sh.setPosition(16, 16);
+		window.draw(sh);
 
+		ImGui::SFML::Update(window, deltaClock.restart());
 
 		const int squareSpeed = 3;
 
-		
 		myFpsCounter.setPosition(8, 8);
 		myFpsCounter.setFillColor(sf::Color::Red);
 		myFpsCounter.setFont(*font);
@@ -258,7 +235,6 @@ int main() {
 		every--;
 
 		ImGui::Begin("Sample window"); // begin window
-
 		// Background color edit
 		if (ImGui::ColorEdit3("Background color", color)) {
 			// this code gets called if color value changes, so
@@ -281,6 +257,7 @@ int main() {
 
 		window.clear( bgColor );//nettoie la frame
 		window.draw(myFpsCounter);
+	
 
 		for (int k = 0; k < (int)vec.size(); k++) {
 			Particle * p = vec[vec.size() - k - 1];
@@ -293,8 +270,7 @@ int main() {
 			}
 		}
 
-
-		bloomPass->update(window);
+		
 
 		srand(1055 + 100 +  1024 * 1024 + 0xdeadbeef);
 
