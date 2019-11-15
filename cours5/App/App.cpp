@@ -276,88 +276,12 @@ int main() {
 		
 		window.draw(shape);
 
-		if(false)
-		{//test x
-			sf::Sprite sp(testTex);
-			sp.setPosition(500, 100);
-			sp.setScale(0.5, 0.5);
-			blurShader->setUniform("texture", testTex);
-			getKernelOffsets(blurWidth, kernel, offsets);
-			blurWidth += (1.0 / 60.0) * 6;
-			int nbSamples = kernel.size();
-			blurShader->setUniform("samples", nbSamples);
-			for (int i = 0; i < nbSamples; i++)
-				offsets[i].x *= 1.0f / testTex.getSize().x;
-			blurShader->setUniformArray("kernel", kernel.data(), nbSamples);
-			blurShader->setUniformArray("offsets", offsets.data(), nbSamples);
-			window.draw(sp, blurShader);
-		}
-
-		if (false)
-		{//test y
-			sf::Sprite sp(testTex);
-			sp.setPosition(500, 100);
-			sp.setScale(0.5, 0.5);
-			bloomShader->setUniform("texture", testTex);
-			getKernelOffsets(blurWidth, kernel, offsets,1.0f,false);
-			blurWidth += (1.0 / 60.0) * 2;
-			int nbSamples = kernel.size();
-			bloomShader->setUniform("samples", nbSamples);
-			for (int i = 0; i < nbSamples; i++)
-				offsets[i].y *= 1.0f / testTex.getSize().y;
-			bloomShader->setUniformArray("kernel", kernel.data(), nbSamples);
-			bloomShader->setUniformArray("offsets", offsets.data(), nbSamples);
-			window.draw(sp, bloomShader);
-		}
-
-		//if(false)
 		{
-			//destX.clear(sf::Color(255, 0, 0, 0));
-			//destFinal.clear(sf::Color(0, 25, 0, 0));
-
-			//blur( blurWidth, &testTex, blurShader, &destX, &destFinal);
-			//blurWidth += (1.0 / 60.0) * 2;
-			//destX->draw(&window);
-
-			/*
-			sf::Texture winTex;
-			winTex.create(window.getSize().x, window.getSize().y);
-			winTex.update(window);
-
-			sf::Sprite sp(winTex );
-			sp.setPosition(Vector2f(20, 20));
-			window.draw(sp );
-			*/
 			
-			
-			
-			/*
-			sf::Sprite sp(winTex);
-
-			destX->draw(sp, redShader);
-			destX->display();
-
-			sf::Sprite spDx(destX->getTexture());
-
-			spDx.move(20, 20);
-			window.draw(spDx);
-			*/
-
-			/*
-			winTex.update(window);
-			destX->clear(sf::Color(0, 0, 0, 0));
-			blurX(blurWidth, &winTex, blurShader, destX);
-			sf::Sprite sp(destX->getTexture());
-			sp.move(20, 20);
-			window.draw(sp);
-			blurWidth += (1.0 / 60.0) * 2;
-			*/
-
 			winTex.update(window);
 			destX->clear(sf::Color(0, 0, 0, 0));
 			destFinal->clear(sf::Color(0, 0, 0, 0));
 			blur(blurWidth, &winTex, blurShader, destX,destFinal);
-			//sf::Sprite sp(destX->getTexture());
 			sf::Sprite sp(destFinal->getTexture());
 			sp.move(20, 20);
 			window.draw(sp);
