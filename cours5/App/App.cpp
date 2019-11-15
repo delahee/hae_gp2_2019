@@ -89,7 +89,6 @@ static void blur(float dx, sf::Texture* source, sf::Shader*_blurShader, sf::Rend
 	destX->setSmooth(true);
 	destFinal->setSmooth(true);
 	{
-		//blur the x
 		_blurShader->setUniform("texture", *source);
 
 		sf::Sprite sprX(*source);
@@ -132,7 +131,7 @@ int main() {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 2;
 	
-	sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML works!", sf::Style::Default, settings);
+	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML works!", sf::Style::Default, settings);
 	window.setVerticalSyncEnabled(true);
 
 	bloomPass = new sf::Texture();
@@ -185,7 +184,7 @@ int main() {
 	}
 	testTex.setSmooth(true);
 
-	float blurWidth = 0.0f;
+	float blurWidth = 50.0f;
 
 	sf::Text myFpsCounter;
 	int every = 0;
@@ -241,7 +240,7 @@ int main() {
 		}
 		every--;
 
-		window.clear( sf::Color(0x00000000));//nettoie la frame
+		window.clear( sf::Color(0x00080f00));//nettoie la frame
 		window.draw(myFpsCounter);
 
 		for (int k = 0; k < (int)vec.size(); k++) {
@@ -265,27 +264,85 @@ int main() {
 
 		bloomPass->update(window);
 
-		auto c = 128;
-		sf::CircleShape shape(c, (int)(2 * 3.141569 * 100));
-		shape.setOrigin(Vector2f(c, c));
-		shape.setPosition(300, 300);
-		shape.setFillColor(sf::Color(0xE884D4ff));
-		shape.setTexture(&whiteTex);
+		srand(1055 + 100 +  1024 * 1024 + 0xdeadbeef);
 
-		auto stex = shape.getTexture();
-		
-		window.draw(shape);
+		for (int i = 0; i < 150; ++i) {
+			auto c = 2 + Lib::rd()*Lib::rd() * 2;
+			sf::CircleShape shape(c, (int)(2 * 3.141569 * c));
+			shape.setOrigin(Vector2f(c, c));
+			shape.setPosition(Lib::rd() * 1920, Lib::rd() * 1080);
+			sf::Color col = Lib::hsv( 190 + Lib::rd() * 30, 15.0/100.0 + Lib::rd() * 0.05, 90.0/100.0 + Lib::rd() * 0.1);
+			shape.setFillColor(col);
+			shape.setTexture(&whiteTex);
+			window.draw(shape);
+		}
+
+		for (int i = 0; i < 20; ++i) {
+			auto c = 12 + Lib::rd()*Lib::rd() * 250;
+			sf::CircleShape shape(c, (int)(2 * 3.141569 * c));
+			shape.setOrigin(Vector2f(c, c));
+			shape.setPosition(Lib::rd()  * 1920, Lib::rd() * 1080);
+			shape.setFillColor(Lib::hsv(Lib::rd() *360.0, 0.9 + Lib::rd() * 0.01, 0.9 + Lib::rd() * 0.01));
+			shape.setTexture(&whiteTex);
+			window.draw(shape);
+		}
 
 		{
-			
+			auto c = 128;
+			sf::CircleShape shape(c, (int)(2 * 3.141569 * c));
+			shape.setOrigin(Vector2f(c, c));
+			shape.setPosition(300, 300);
+			shape.setFillColor(sf::Color(0xE884D4ff));
+			shape.setTexture(&whiteTex);
+			window.draw(shape);
+		}
+
+		{
+			auto c = 32;
+			sf::CircleShape shape(c, (int)(2 * 3.141569 * c));
+			shape.setOrigin(Vector2f(c, c));
+			shape.setPosition(600, 250);
+			shape.setFillColor(sf::Color(0x33887Fff));
+			shape.setTexture(&whiteTex);
+			window.draw(shape);
+		}
+
+		{
+			auto c = 48;
+			sf::CircleShape shape(c, (int)(2 * 3.141569 * c));
+			shape.setOrigin(Vector2f(c, c));
+			shape.setPosition(150, 500);
+			shape.setFillColor(sf::Color(0x337f09ff));
+			shape.setTexture(&testTex);
+			window.draw(shape);
+		}
+
+		
+
+		{
 			winTex.update(window);
-			destX->clear(sf::Color(0, 0, 0, 0));
-			destFinal->clear(sf::Color(0, 0, 0, 0));
+			destX->clear(sf::Color(0, 0, 0, 255));
+			destFinal->clear(sf::Color(0, 0, 0, 255));
 			blur(blurWidth, &winTex, blurShader, destX,destFinal);
 			sf::Sprite sp(destFinal->getTexture());
-			sp.move(20, 20);
-			window.draw(sp);
+			sf::RenderStates rs;
+
+			rs.blendMode = sf::BlendAdd;
+
+			bloomShader->setUniform("texture", destFinal->getTexture());
+			bloomShader->setUniform("bloomPass", 0.5f);
+			bloomShader->setUniform("bloomMul", sf::Glsl::Vec4(1.3,1.3,1.0, 1.0) );
+
+			rs.shader = bloomShader;
+			sf::Color c = sp.getColor();
+			c.a *= 0.9;
+			sp.setColor(c);
+
+			window.draw(sp,rs);
 			blurWidth += (1.0 / 60.0) * 2;
+
+			if (blurWidth >= 64)
+				blurWidth = 54;
 		}
 		
 		window.display();//ca dessine et ca attend la vsync

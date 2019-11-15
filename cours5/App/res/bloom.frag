@@ -1,24 +1,23 @@
 #version 120
-uniform sampler2D texture;
+uniform sampler2D	texture;
+uniform float		bloomPass;
+uniform vec3		bloomMul;
 
-uniform int		samples;
-uniform float	kernel[64 * 4];
-uniform vec2	offsets[64 * 4];
-
-vec4 blurGauss(sampler2D image, vec2 uv){
-	vec4 color = vec4(0.0);
-	for (int i = 0; i < samples; i++) 
-		color += texture2D(image, uv + offsets[i]) * vec4(kernel[i]);
-
-	//color.g = 0.0;
+vec4 bloom(vec4 color){
+	float 	alpha = color.a;
+		
+	vec4	lumVector(0.299f, 0.587f, 0.114f);
+	float	luminance = dot(iLuminanceVector, color.rgb);
+		
+	luminance = max(0.0, luminance - bloomPass);
+		
+	color.rgb *= sign(luminance);
+	color *= bloomMul;
 	return color;
 }
 
 void main() {
     vec2 coord = gl_TexCoord[0].xy;
-    //vec4 pixel_color = texture2D(texture, coord);
-
-	vec4 pixel_color = blurGauss(texture, coord);
-
-	gl_FragColor = pixel_color * gl_Color;
+	vec4 pixel_color = bloom( texture2D(texture, coord) * gl_Color );
+	gl_FragColor = pixel_color;
 }

@@ -54,13 +54,13 @@ public:
 	}
 
 	//// hue: 0-360°; sat: 0.f-1.f; val: 0.f-1.f 
-	sf::Color hsv(int hue, float sat, float val);
+	static sf::Color hsv(int hue, float sat, float val);
 
 	float lerp(float a, float b, float r) {
 		return a + (b - a) * r;
 	}
 
-	float rd() {
+	static inline float rd() {
 		return 1.0 * rand() / RAND_MAX;
 	}
 
