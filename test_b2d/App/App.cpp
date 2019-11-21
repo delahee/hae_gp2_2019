@@ -11,13 +11,15 @@
 
 #include <imgui-SFML.h>
 #include <imgui.h>
-
+#include <Box2D/Box2D.h>
 using namespace sf;
 
 static sf::Shader * simpleShader = nullptr;
 static sf::Shader * redShader = nullptr;
 static sf::Shader * bloomShader = nullptr;
 static sf::Shader * blurShader = nullptr;
+
+static b2Vec2 m_vec(0, 0);
 
 static Vector2f mousePos[4] = {
 	Vector2f(0,0),
@@ -110,6 +112,7 @@ static Vector2f getContactNormal( Vector2f segment[2], sf::Rect<float> rect ) {
 
 int main() {
 
+	printf("%f\n", m_vec.x);
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 2;
 	

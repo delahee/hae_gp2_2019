@@ -15,3 +15,7 @@
 /test_sfml/test/x64
 /test_sfml/test/.vs
 /cours5/App/.vs
+/test_b2d/App/x64
+/test_b2d/App/Debug
+/test_b2d/App/Release
+/test_b2d/App/.vs
