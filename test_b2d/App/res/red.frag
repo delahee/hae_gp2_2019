@@ -7,3 +7,5 @@ void main() {
 	pixel_color.g = pixel_color.b = 0.0;
 	gl_FragColor = pixel_color * gl_Color;
 }
+
+//ok
