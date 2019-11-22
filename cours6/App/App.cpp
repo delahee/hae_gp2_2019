@@ -363,7 +363,7 @@ int main() {
 
 				b2Vec2 startToInter = inter - b2Vec2(p0.x, p0.y);
 				b2Vec2 refl = startToInter - 2 * Lib::dot(startToInter, normal) * normal;
-				b2Vec2 endRefl = b2Vec2(p0.x, p0.y) + refl;
+				b2Vec2 endRefl = inter + refl;
 
 				{
 					sf::VertexArray line(sf::LineStrip);
