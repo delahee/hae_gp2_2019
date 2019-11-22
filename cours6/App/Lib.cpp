@@ -99,7 +99,7 @@ double Lib::v2Dist(const Vector2f & v0, const Vector2f & v1)
 #include <SFML/Graphics.hpp>
 #include <Box2D/Box2D.h>
 
-bool Lib::willCollide2(Vector2f pos, Vector2f speed, Shape * other, b2Vec2 & res) {
+bool Lib::willCollide(Vector2f pos, Vector2f speed, Shape * other, b2Vec2 & inter, b2Vec2 & normal ) {
 
 	sf::FloatRect oBounds = other->getGlobalBounds();
 	b2Transform transform;
@@ -126,46 +126,16 @@ bool Lib::willCollide2(Vector2f pos, Vector2f speed, Shape * other, b2Vec2 & res
 
 	bool hit = polyB.RayCast(&output, input, transform, childIndex);
 	if (hit) { 
-		res = input.p1 + output.fraction * (input.p2 - input.p1); 
+		inter = input.p1 + output.fraction * (input.p2 - input.p1);
+		normal = output.normal;
 		return true;
 	}
 	return false;
 }
 
-bool Lib::willCollide(Shape* me, Vector2f previewSpeed, Shape * other, b2Manifold * res) {
-
-	sf::FloatRect oBounds = other->getGlobalBounds();
-	sf::FloatRect mBounds = me->getGlobalBounds();
-
-	b2Manifold coll;
-	b2EdgeShape e;
-
-	b2Vec2 src(mBounds.getPosition().x, mBounds.getPosition().y);
-	e.Set(src, src + b2Vec2(previewSpeed.x, previewSpeed.y));
-
-	b2Transform trA;
-	trA.SetIdentity();
-
-	b2PolygonShape polyB;
-
-	b2Vec2 center;
-	center.x = oBounds.left + oBounds.width * 0.5f;
-	center.y = oBounds.top + oBounds.height * 0.5f;
-
-	b2Vec2 size;
-	size.x = oBounds.width;
-	size.y = oBounds.height;
-	polyB.SetAsBox(size.x*0.5,size.y*0.5, center,0.0f );
-
-	b2Transform trB;
-	trB.SetIdentity();
-
-	if (res == nullptr)
-		res = &coll;
-
-	b2CollideEdgeAndPolygon(res, &e, trA, &polyB, trB);
-	
-	return res->pointCount > 0;
+double Lib::dot(b2Vec2 v0, b2Vec2 v1)
+{
+	return v0.x * v1.x + v0.y * v1.y;
 }
 
 double Lib::v2Len(const Vector2f & v0)

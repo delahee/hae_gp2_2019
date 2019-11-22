@@ -71,6 +71,8 @@ public:
 	static double v2Dist(const Vector2f&v0, const Vector2f&v1);
 	static double PI;
 
-	static bool willCollide2(Vector2f pos, Vector2f speed, Shape * other, b2Vec2 & res);
-	static bool willCollide(Shape* me, Vector2f previewSpeed, Shape * other, b2Manifold * res);
+	static bool willCollide(Vector2f pos, Vector2f speed, Shape * other, b2Vec2 & inter, b2Vec2 & normal);
+
+	static double dot(b2Vec2 v0, b2Vec2 v1);
+	
 };

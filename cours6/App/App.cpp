@@ -343,53 +343,35 @@ int main() {
 			b2Manifold coll;
 
 			Vector2f speed = p1 - p0;
-			b2Vec2 res;
-			if (Lib::willCollide2(p0, speed, &shp, res)) {
+			b2Vec2 inter;
+			b2Vec2 normal;
+			if (Lib::willCollide(p0, speed, &shp, inter, normal)) {
 				auto dotSize = 8;
 				sf::RectangleShape lp;
 				lp.setOrigin(dotSize*0.5, dotSize*0.5);
 				lp.setSize(Vector2f(dotSize, dotSize));
 				lp.setFillColor(sf::Color(0, 255, 0, 255));
-				lp.setPosition(res.x, res.y);
+				lp.setPosition(inter.x, inter.y);
 				window.draw(lp);
-			}
 
-
-			if( false )
-			{
-				Lib::willCollide(&origin, speed, &shp, &coll);
 				{
-					auto dotSize = 8;
-					if (coll.pointCount >= 1) {
-						sf::RectangleShape lp;
-						lp.setOrigin(dotSize*0.5, dotSize*0.5);
-						lp.setSize(Vector2f(dotSize, dotSize));
-						lp.setFillColor(sf::Color(0, 255, 0, 255));
-						b2Vec2 mlp = coll.localPoint;
-						lp.setPosition(mlp.x, mlp.y);
-						window.draw(lp);
-					}
-
-					if (coll.pointCount >= 1) {
-						sf::RectangleShape cp;
-						cp.setOrigin(dotSize*0.5, dotSize*0.5);
-						cp.setSize(Vector2f(dotSize, dotSize));
-						b2Vec2 lp = coll.points[0].localPoint;
-						cp.setPosition(lp.x, lp.y);
-						cp.setFillColor(sf::Color(255, 0, 255, 255));
-						window.draw(cp);
-					}
-
-					if (coll.pointCount == 2) {
-						sf::RectangleShape cp;
-						cp.setOrigin(dotSize*0.5, dotSize*0.5);
-						cp.setSize(Vector2f(dotSize, dotSize));
-						b2Vec2 lp = coll.points[1].localPoint;
-						cp.setPosition(lp.x, lp.y);
-						cp.setFillColor(sf::Color(0, 0, 255, 255));
-						window.draw(cp);
-					}
+					sf::VertexArray line(sf::LineStrip);
+					line.append(sf::Vertex(Vector2f(inter.x, inter.y), sf::Color(255, 0, 0, 255)));
+					line.append(sf::Vertex(Vector2f(inter.x + normal.x * 30, inter.y + normal.y * 30), sf::Color(255, 0, 0, 255)));
+					window.draw(line);
 				}
+
+				b2Vec2 startToInter = inter - b2Vec2(p0.x, p0.y);
+				b2Vec2 refl = startToInter - 2 * Lib::dot(startToInter, normal) * normal;
+				b2Vec2 endRefl = b2Vec2(p0.x, p0.y) + refl;
+
+				{
+					sf::VertexArray line(sf::LineStrip);
+					line.append(sf::Vertex(Vector2f(inter.x, inter.y), sf::Color(255, 255, 0, 255)));
+					line.append(sf::Vertex(Vector2f(endRefl.x, endRefl.y), sf::Color(255, 255, 0, 255)));
+					window.draw(line);
+				}
+
 			}
 
 			
