@@ -234,7 +234,7 @@ int main() {
 	walls[3].setSize(Vector2f(winWidth, 16));
 
 	al.push(new Delay([winWidth, winHeight,&vec]() {
-		int nb = 16;
+		int nb = 128;
 		for (int i = 0; i <nb; ++i) {
 			Shape* sh = new sf::CircleShape(16);
 			sh->setOrigin(16, 16);
@@ -281,9 +281,6 @@ int main() {
 						pos = Vector2f(endRefl.x, endRefl.y);
 						speed = Vector2f(0,0);
 						nextPos = pos + speed;
-
-
-						break;
 					}
 					else {
 						//nextPos = pos + speed;
@@ -374,6 +371,14 @@ int main() {
 		ImGui::End(); // end window
 
 		al.update(dt.asSeconds());
+
+		auto cl15 = fabs(fmodf(clock.getElapsedTime().asSeconds(), 0.5f));
+		if (cl15 >= 0.0 && cl15 <= 0.25) {
+			bgColor.r = static_cast<sf::Uint8>(color[0] * 255.f) + 32;
+		}
+		else 
+			bgColor.r = static_cast<sf::Uint8>(color[0] * 255.f);
+
 		window.clear( bgColor );//nettoie la frame
 
 		/////////////
