@@ -19,3 +19,13 @@
 /test_b2d/App/Debug
 /test_b2d/App/Release
 /test_b2d/App/.vs
+/cours5/App/Debug/*.idb
+/cours5/App/Debug/*.obj
+/cours5/App/Debug/*.log
+/cours5/App/Debug/*.ilk
+/cours5/App/Debug/*.enc
+/cours5/App/Debug/*.pch
+/cours5/App/Debug/App.pdb
+/cours5/App/Debug/App.tlog/*.lastbuildstate
+/cours5/App/Debug/App.tlog/*.tlog
+/cours5/App/Debug/*.pdb
