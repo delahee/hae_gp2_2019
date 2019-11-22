@@ -50,12 +50,12 @@ sf::Color Lib::hsv(int hue, float sat, float val)
 	{
 	default:
 	case 0:
-	case 6: return sf::Color(val * 255, t * 255, p * 255);
-	case 1: return sf::Color(q * 255, val * 255, p * 255);
-	case 2: return sf::Color(p * 255, val * 255, t * 255);
-	case 3: return sf::Color(p * 255, q * 255, val * 255);
-	case 4: return sf::Color(t * 255, p * 255, val * 255);
-	case 5: return sf::Color(val * 255, p * 255, q * 255);
+	case 6: return sf::Color((sf::Uint8)val * 255, (sf::Uint8)t * 255, (sf::Uint8)p * 255);
+	case 1: return sf::Color((sf::Uint8)q * 255, (sf::Uint8)val * 255, (sf::Uint8)p * 255);
+	case 2: return sf::Color((sf::Uint8)p * 255, (sf::Uint8) val * 255, (sf::Uint8)t * 255);
+	case 3: return sf::Color((sf::Uint8)p * 255, (sf::Uint8) q * 255, (sf::Uint8)val * 255);
+	case 4: return sf::Color((sf::Uint8)t * 255, (sf::Uint8)p * 255, (sf::Uint8)val * 255);
+	case 5: return sf::Color((sf::Uint8)val * 255, (sf::Uint8)p * 255, (sf::Uint8)q * 255);
 	}
 }
 
