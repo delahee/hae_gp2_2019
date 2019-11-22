@@ -129,6 +129,8 @@ static Vector2f p1;
 
 static RectangleShape shp;
 
+static RectangleShape walls[4];
+
 int main() {
 
 	sf::ContextSettings settings;
@@ -214,6 +216,22 @@ int main() {
 	double winWidth = window.getSize().x;
 	double winHeight = window.getSize().y;
 
+	walls[0].setFillColor(sf::Color::Yellow);
+	walls[0].setPosition( -15,0);
+	walls[0].setSize(Vector2f(16, winHeight));
+
+	walls[1].setFillColor(sf::Color::Yellow);
+	walls[1].setPosition(winWidth-1, 0);
+	walls[1].setSize(Vector2f(16, winHeight));
+
+	walls[2].setFillColor(sf::Color::Yellow);
+	walls[2].setPosition(0, -15);
+	walls[2].setSize(Vector2f(winWidth, 16));
+
+	walls[3].setFillColor(sf::Color::Yellow);
+	walls[3].setPosition(0, winHeight-1);
+	walls[3].setSize(Vector2f(winWidth, 16));
+
 	al.push(new Delay([winWidth, winHeight,&vec]() {
 		int nb = 8;
 		for (int i = 0; i <nb; ++i) {
@@ -223,9 +241,15 @@ int main() {
 			auto angle = 1.0 * i / nb * 3.14156 * 2;
 			float dx = cos(angle) * 180.0f;
 			float dy = sin(angle) * 180.0f;
-			Particle * p = new FadingParticle(sh);
+			Particle * p = new Particle(sh);
+			p->life = 1000000;
+
 			sh->setPosition(winWidth*0.5 + dx, winHeight * 0.5 + dy);
 			sh->setFillColor(sf::Color(200,0,0,255));
+
+			p->bhv = [](Particle* p) {
+
+			};
 			vec.push_back(p);
 		}
 	}, 800));
@@ -311,6 +335,8 @@ int main() {
 		al.update(dt.asSeconds());
 		window.clear( bgColor );//nettoie la frame
 
+		/////////////
+		/////////////
 		///DRAW START
 
 		if (showSegment >= 2) {
@@ -340,8 +366,6 @@ int main() {
 			origin.setPosition(p0.x, p0.y);
 			window.draw(origin);
 			
-			b2Manifold coll;
-
 			Vector2f speed = p1 - p0;
 			b2Vec2 inter;
 			b2Vec2 normal;
@@ -371,16 +395,12 @@ int main() {
 					line.append(sf::Vertex(Vector2f(endRefl.x, endRefl.y), sf::Color(255, 255, 0, 255)));
 					window.draw(line);
 				}
-
 			}
-
-			
 		}
 
-		sf::RectangleShape sh(Vector2f(32, 32));
-		sh.setPosition(50, 50);
-		sh.setFillColor(sf::Color(255, 0, 127, 255));
-		window.draw(sh);
+		for (int i = 0; i < 4; ++i) {
+			window.draw(walls[i]);
+		}
 
 		window.draw(myFpsCounter);
 
