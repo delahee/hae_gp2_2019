@@ -2,8 +2,7 @@
 //
 
 #include "pch.h"
-#include "Lib.hpp"
-#include "Particle.h"
+
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <direct.h>
@@ -12,6 +11,9 @@
 #include <imgui-SFML.h>
 #include <imgui.h>
 
+#include "Lib.hpp"
+#include "Particle.h"
+#include "Action.hpp"
 #include <Box2D/Box2D.h>
 
 using namespace sf;
@@ -77,8 +79,8 @@ static void blur(float dx, sf::Texture* source, sf::Shader*_blurShader, sf::Rend
 		_blurShader->setUniformArray("kernel", kernelX.data(), nbSamples);
 		_blurShader->setUniformArray("offsets", offsets.data(), nbSamples);
 
-		auto k = 1.0;
-		_blurShader->setUniform("srcMul", sf::Glsl::Vec4(k, k, k, 1.0));
+		auto k = 1.0f;
+		_blurShader->setUniform("srcMul", sf::Glsl::Vec4(k, k, k, 1.0f));
 
 		destX->draw(sprX, _blurShader);
 		destX->display();
@@ -100,9 +102,32 @@ static void blur(float dx, sf::Texture* source, sf::Shader*_blurShader, sf::Rend
 		destFinal->draw(sprXY, _blurShader);
 		destFinal->display();
 	}
-
-	
 }
+
+static sf::Texture * whiteTex = nullptr;
+
+class FadingParticle : public Particle {
+public:
+	int fadeStart = 20;
+
+	FadingParticle(sf::Shape * s) : Particle(s){
+		
+	}
+
+	virtual void update() {
+		Particle::update();
+		if (life < fadeStart) {
+			auto sc = spr->getScale();
+			spr->setScale(Vector2f(sc.x * 0.95, sc.y * 0.95));
+		}
+	}
+
+};
+
+static Vector2f p0;
+static Vector2f p1;
+
+static RectangleShape shp;
 
 int main() {
 
@@ -149,11 +174,12 @@ int main() {
 	
 	std::vector< Particle * > vec;
 
-	sf::Texture whiteTex;
-	if (!whiteTex.create(1, 1)) printf("tex crea failed\n");
-	whiteTex.setSmooth(true);
+	
+	whiteTex = new Texture();
+	if (!whiteTex->create(1, 1)) printf("tex crea failed\n");
+	whiteTex->setSmooth(true);
 	unsigned int col = 0xffffffff;
-	whiteTex.update((const sf::Uint8*)&col,1,1,0,0);
+	whiteTex->update((const sf::Uint8*)&col,1,1,0,0);
 
 	sf::Texture testTex;
 	//testTex.create(256, 256);
@@ -166,7 +192,6 @@ int main() {
 
 	sf::Text myFpsCounter;
 	int every = 0;
-
 
 	sf::RenderTexture  * destX = new sf::RenderTexture();
 	destX->create(window.getSize().x, window.getSize().y);
@@ -185,6 +210,28 @@ int main() {
 	char windowTitle[256] = "maWindow";
 	float color[3] = { bgColor.r/255.0f, bgColor.g / 255.0f, bgColor.b / 255.0f };
 
+	ActionList al;
+	double winWidth = window.getSize().x;
+	double winHeight = window.getSize().y;
+
+	al.push(new Delay([winWidth, winHeight,&vec]() {
+		int nb = 8;
+		for (int i = 0; i <nb; ++i) {
+			Shape* sh = new sf::CircleShape(16);
+			sh->setOrigin(16, 16);
+			//auto angle = Lib::rd() * 3.14156;
+			auto angle = 1.0 * i / nb * 3.14156 * 2;
+			float dx = cos(angle) * 180.0f;
+			float dy = sin(angle) * 180.0f;
+			Particle * p = new FadingParticle(sh);
+			sh->setPosition(winWidth*0.5 + dx, winHeight * 0.5 + dy);
+			sh->setFillColor(sf::Color(200,0,0,255));
+			vec.push_back(p);
+		}
+	}, 800));
+
+	int showSegment = 0;
+
 	while (window.isOpen())//on passe tout le temps DEBUT DE LA FRAME 
 	{
 		sf::Event event;//recup les evenement clavier/pad
@@ -193,14 +240,24 @@ int main() {
 
 			ImGui::SFML::ProcessEvent(event);
 
+			Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window));
+
 			switch (event.type ) {
 				case sf::Event::KeyReleased:
 					
 					break;
 
 				case sf::Event::KeyPressed:
-					{
-					
+					if (event.key.code == sf::Keyboard::F1) {
+						p0.x = mousePos.x;
+						p0.y = mousePos.y;
+						showSegment++;
+					}
+
+					if (event.key.code == sf::Keyboard::F2) {
+						p1.x = mousePos.x;
+						p1.y = mousePos.y;
+						showSegment++;
 					}
 					break;
 
@@ -213,11 +270,10 @@ int main() {
 			}
 		}
 
-		sf::RectangleShape sh(Vector2f(32, 32));
-		sh.setPosition(16, 16);
-		window.draw(sh);
+		
 
-		ImGui::SFML::Update(window, deltaClock.restart());
+		sf::Time dt = deltaClock.restart();
+		ImGui::SFML::Update(window, dt);
 
 		const int squareSpeed = 3;
 
@@ -252,9 +308,99 @@ int main() {
 		}
 		ImGui::End(); // end window
 
+		al.update(dt.asSeconds());
 		window.clear( bgColor );//nettoie la frame
+
+		///DRAW START
+
+		if (showSegment >= 2) {
+
+			shp.setSize(Vector2f(100, 100));
+			shp.setOrigin(0, 0);
+			shp.setPosition(150, 400);
+			shp.setFillColor(sf::Color(180, 100, 90, 255));
+			shp.setOutlineThickness(2.0);
+			shp.setOutlineColor(sf::Color(200, 200, 200, 255));
+
+			window.draw(shp);
+
+			double len = Lib::v2Len(p1 - p0);
+			sf::RectangleShape sh(Vector2f(1, len));
+			sh.setFillColor(sf::Color(255, 0, 127, 255));
+			sh.setOrigin(0.5, 0.0);
+			sh.setPosition(p0.x, p0.y);
+			double angle = atan2(p1.y - p0.y, p1.x - p0.x);
+			angle -= Lib::PI * 0.5;
+			sh.setRotation( angle / (2.0 * 3.14156) * 360.0);
+			window.draw(sh);
+
+			sf::RectangleShape origin;
+			origin.setOrigin(2, 2);
+			origin.setSize(Vector2f(4, 4));
+			origin.setPosition(p0.x, p0.y);
+			window.draw(origin);
+			
+			b2Manifold coll;
+
+			Vector2f speed = p1 - p0;
+			b2Vec2 res;
+			if (Lib::willCollide2(p0, speed, &shp, res)) {
+				auto dotSize = 8;
+				sf::RectangleShape lp;
+				lp.setOrigin(dotSize*0.5, dotSize*0.5);
+				lp.setSize(Vector2f(dotSize, dotSize));
+				lp.setFillColor(sf::Color(0, 255, 0, 255));
+				lp.setPosition(res.x, res.y);
+				window.draw(lp);
+			}
+
+
+			if( false )
+			{
+				Lib::willCollide(&origin, speed, &shp, &coll);
+				{
+					auto dotSize = 8;
+					if (coll.pointCount >= 1) {
+						sf::RectangleShape lp;
+						lp.setOrigin(dotSize*0.5, dotSize*0.5);
+						lp.setSize(Vector2f(dotSize, dotSize));
+						lp.setFillColor(sf::Color(0, 255, 0, 255));
+						b2Vec2 mlp = coll.localPoint;
+						lp.setPosition(mlp.x, mlp.y);
+						window.draw(lp);
+					}
+
+					if (coll.pointCount >= 1) {
+						sf::RectangleShape cp;
+						cp.setOrigin(dotSize*0.5, dotSize*0.5);
+						cp.setSize(Vector2f(dotSize, dotSize));
+						b2Vec2 lp = coll.points[0].localPoint;
+						cp.setPosition(lp.x, lp.y);
+						cp.setFillColor(sf::Color(255, 0, 255, 255));
+						window.draw(cp);
+					}
+
+					if (coll.pointCount == 2) {
+						sf::RectangleShape cp;
+						cp.setOrigin(dotSize*0.5, dotSize*0.5);
+						cp.setSize(Vector2f(dotSize, dotSize));
+						b2Vec2 lp = coll.points[1].localPoint;
+						cp.setPosition(lp.x, lp.y);
+						cp.setFillColor(sf::Color(0, 0, 255, 255));
+						window.draw(cp);
+					}
+				}
+			}
+
+			
+		}
+
+		sf::RectangleShape sh(Vector2f(32, 32));
+		sh.setPosition(50, 50);
+		sh.setFillColor(sf::Color(255, 0, 127, 255));
+		window.draw(sh);
+
 		window.draw(myFpsCounter);
-	
 
 		for (int k = 0; k < (int)vec.size(); k++) {
 			Particle * p = vec[vec.size() - k - 1];
@@ -267,6 +413,7 @@ int main() {
 			}
 		}
 
+		///Draw all bloomed before this
 		{
 			winTex.update(window);
 			destX->clear(sf::Color(0, 0, 0, 255));
@@ -279,7 +426,7 @@ int main() {
 
 			bloomShader->setUniform("texture", destFinal->getTexture());
 			bloomShader->setUniform("bloomPass", 0.6f);
-			bloomShader->setUniform("bloomMul", sf::Glsl::Vec4(1.3,1.3,1.0, 1.0) );
+			bloomShader->setUniform("bloomMul", sf::Glsl::Vec4(1.3f,1.3f,1.0f, 1.0f) );
 
 			rs.shader = bloomShader;
 			sf::Color c = sp.getColor();
@@ -287,7 +434,7 @@ int main() {
 			sp.setColor(c);
 
 			window.draw(sp,rs);
-			blurWidth += (1.0 / 60.0) * 2;
+			blurWidth += (1.0f / 60.0f) * 2;
 
 			if (blurWidth >= 64)
 				blurWidth = 54;

@@ -1,13 +1,13 @@
 #version 120
 uniform sampler2D	texture;
 uniform float		bloomPass;
-uniform vec3		bloomMul;
+uniform vec4		bloomMul;
 
 vec4 bloom(vec4 color){
 	float 	alpha = color.a;
 		
-	vec4	lumVector(0.299f, 0.587f, 0.114f);
-	float	luminance = dot(iLuminanceVector, color.rgb);
+	vec3	lumVector = vec3(0.299, 0.587, 0.114);
+	float	luminance = dot(lumVector, color.rgb);
 		
 	luminance = max(0.0, luminance - bloomPass);
 		

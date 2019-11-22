@@ -30,3 +30,5 @@
 /cours5/App/Debug/App.tlog/*.tlog
 /cours5/App/Debug/*.pdb
 /cours6/App/Debug
+/cours6/App/.vs
+/cours6/ExternBox2d/Debug

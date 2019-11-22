@@ -9,7 +9,7 @@ class Particle {
 public:
 
 	sf::Shape * spr;
-	Vector2f dir;
+	Vector2f speed;
 
 	int life = 100;
 	bool killed = false;
@@ -18,7 +18,6 @@ public:
 
 	Particle(sf::Shape * spr) {
 		this->spr = spr;
-		dir.y = 1;
 	}
 
 	~Particle() {
@@ -26,7 +25,7 @@ public:
 		spr = nullptr;
 	}
 
-	void update() {
+	virtual void update() {
 		if (bhv) {
 			bhv(this);
 		}
@@ -36,5 +35,10 @@ public:
 
 	void draw(RenderWindow & win) {
 		win.draw(*spr);
+	}
+
+	void applySpeed() {
+		Vector2f pos = spr->getPosition();
+		spr->setPosition(pos.x + speed.x, pos.y + speed.y);
 	}
 };
