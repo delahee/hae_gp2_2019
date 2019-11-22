@@ -9,7 +9,7 @@ vec4 bloom(vec4 color){
 	vec3	lumVector = vec3(0.299, 0.587, 0.114);
 	float	luminance = dot(lumVector,color.rgb);
 		
-	luminance = max(0.0001, luminance - bloomPass);
+	luminance = max(0.001, luminance - bloomPass);
 		
 	color.rgb *= sign(luminance);
 	color *= bloomMul;

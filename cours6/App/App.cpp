@@ -12,6 +12,8 @@
 #include <imgui-SFML.h>
 #include <imgui.h>
 
+#include <Box2D/Box2D.h>
+
 using namespace sf;
 
 static sf::Shader * simpleShader = nullptr;
@@ -75,6 +77,9 @@ static void blur(float dx, sf::Texture* source, sf::Shader*_blurShader, sf::Rend
 		_blurShader->setUniformArray("kernel", kernelX.data(), nbSamples);
 		_blurShader->setUniformArray("offsets", offsets.data(), nbSamples);
 
+		auto k = 1.0;
+		_blurShader->setUniform("srcMul", sf::Glsl::Vec4(k, k, k, 1.0));
+
 		destX->draw(sprX, _blurShader);
 		destX->display();
 	}
@@ -90,6 +95,8 @@ static void blur(float dx, sf::Texture* source, sf::Shader*_blurShader, sf::Rend
 
 		sf::Sprite sprXY( destX->getTexture());
 		_blurShader->setUniform("texture", destX->getTexture());
+		_blurShader->setUniform("srcMul", sf::Glsl::Vec4(1, 1, 1, 1));
+
 		destFinal->draw(sprXY, _blurShader);
 		destFinal->display();
 	}
@@ -260,75 +267,6 @@ int main() {
 			}
 		}
 
-		
-
-		srand(1055 + 100 +  1024 * 1024 + 0xdeadbeef);
-
-		for (int i = 0; i < 150; ++i) {
-			auto c = 2 + Lib::rd()*Lib::rd() * 2;
-			sf::CircleShape shape(c, (int)(2 * 3.141569 * c));
-			shape.setOrigin(Vector2f(c, c));
-			shape.setPosition( 32 + Lib::rd() * 1920, Lib::rd() * 1080);
-			sf::Color col = Lib::hsv( 190 + (int)(Lib::rd() * 30), 15.0/100.0 + Lib::rd() * 0.05, 95.0/100.0 + Lib::rd() * 0.1);
-			shape.setFillColor(col);
-			shape.setTexture(&whiteTex);
-			window.draw(shape);
-		}
-
-		for (int i = 0; i < 20; ++i) {
-			auto c = 12 + Lib::rd()*Lib::rd() * 250;
-			sf::CircleShape shape(c, (int)(2 * 3.141569 * c));
-			shape.setOrigin(Vector2f(c, c));
-			shape.setPosition(32 + Lib::rd()  * 1920, Lib::rd() * 1080);
-			shape.setFillColor(Lib::hsv(Lib::rd() *360.0, 0.9 + Lib::rd() * 0.01, 0.95 + Lib::rd() * 0.01));
-			shape.setTexture(&whiteTex);
-			window.draw(shape);
-		}
-
-		//draw palette
-		if(false)
-		for (int i = 0; i < 16; ++i) {
-			int c = 32;
-			sf::RectangleShape shape(Vector2f(c,c));
-			shape.setPosition( c*2 * i + c * 0.5, 16);
-			sf::Color col = Lib::hsv( (360.0 / 16) * i,0.9,0.9);
-			shape.setFillColor(col);
-			shape.setTexture(&whiteTex);
-			window.draw(shape);
-		}
-
-		{
-			auto c = 128;
-			sf::CircleShape shape(c, (int)(2 * 3.141569 * c));
-			shape.setOrigin(Vector2f(c, c));
-			shape.setPosition(300, 300);
-			shape.setFillColor(sf::Color(0xE884D4ff));
-			shape.setTexture(&whiteTex);
-			window.draw(shape);
-		}
-
-		{
-			auto c = 32;
-			sf::CircleShape shape(c, (int)(2 * 3.141569 * c));
-			shape.setOrigin(Vector2f(c, c));
-			shape.setPosition(600, 250);
-			shape.setFillColor(sf::Color(0x33887Fff));
-			shape.setTexture(&whiteTex);
-			window.draw(shape);
-		}
-
-		{
-			auto c = 48;
-			sf::CircleShape shape(c, (int)(2 * 3.141569 * c));
-			shape.setOrigin(Vector2f(c, c));
-			shape.setPosition(150, 500);
-			shape.setFillColor(sf::Color(0x337f09ff));
-			shape.setTexture(&testTex);
-			window.draw(shape);
-		}
-
-		
-
 		{
 			winTex.update(window);
 			destX->clear(sf::Color(0, 0, 0, 255));
@@ -340,12 +278,12 @@ int main() {
 			rs.blendMode = sf::BlendAdd;
 
 			bloomShader->setUniform("texture", destFinal->getTexture());
-			bloomShader->setUniform("bloomPass", 0.5f);
+			bloomShader->setUniform("bloomPass", 0.6f);
 			bloomShader->setUniform("bloomMul", sf::Glsl::Vec4(1.3,1.3,1.0, 1.0) );
 
 			rs.shader = bloomShader;
 			sf::Color c = sp.getColor();
-			c.a =(int)(c.a* 0.9);
+			c.a =(int)(c.a* 0.8);
 			sp.setColor(c);
 
 			window.draw(sp,rs);
