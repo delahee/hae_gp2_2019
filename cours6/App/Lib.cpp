@@ -96,6 +96,17 @@ double Lib::v2Dist(const Vector2f & v0, const Vector2f & v1)
 {
 	return v2Len(v1-v0);
 }
+void Lib::v2Norm(Vector2f & v0)
+{
+	double len = v2Len(v0);
+	if (len == 0.0) {
+		//do nothing
+	}
+	else {
+		v0.x /= len;
+		v0.y /= len;
+	}
+}
 #include <SFML/Graphics.hpp>
 #include <Box2D/Box2D.h>
 

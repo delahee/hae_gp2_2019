@@ -69,6 +69,7 @@ public:
 
 	static double v2Len(const Vector2f&v0);
 	static double v2Dist(const Vector2f&v0, const Vector2f&v1);
+	static void	v2Norm(Vector2f & v0);
 	static double PI;
 
 	static bool willCollide(Vector2f pos, Vector2f speed, Shape * other, b2Vec2 & inter, b2Vec2 & normal);

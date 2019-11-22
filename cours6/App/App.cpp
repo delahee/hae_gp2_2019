@@ -216,24 +216,25 @@ int main() {
 	double winWidth = window.getSize().x;
 	double winHeight = window.getSize().y;
 
-	walls[0].setFillColor(sf::Color::Yellow);
+	sf::Color c(0xE81359ff);
+	walls[0].setFillColor(c);
 	walls[0].setPosition( -15,0);
 	walls[0].setSize(Vector2f(16, winHeight));
 
-	walls[1].setFillColor(sf::Color::Yellow);
+	walls[1].setFillColor(c);
 	walls[1].setPosition(winWidth-1, 0);
 	walls[1].setSize(Vector2f(16, winHeight));
 
-	walls[2].setFillColor(sf::Color::Yellow);
+	walls[2].setFillColor(c);
 	walls[2].setPosition(0, -15);
 	walls[2].setSize(Vector2f(winWidth, 16));
 
-	walls[3].setFillColor(sf::Color::Yellow);
+	walls[3].setFillColor(c);
 	walls[3].setPosition(0, winHeight-1);
 	walls[3].setSize(Vector2f(winWidth, 16));
 
 	al.push(new Delay([winWidth, winHeight,&vec]() {
-		int nb = 8;
+		int nb = 16;
 		for (int i = 0; i <nb; ++i) {
 			Shape* sh = new sf::CircleShape(16);
 			sh->setOrigin(16, 16);
@@ -245,10 +246,50 @@ int main() {
 			p->life = 1000000;
 
 			sh->setPosition(winWidth*0.5 + dx, winHeight * 0.5 + dy);
+			p->speed.x = dx * 0.05;
+			p->speed.y = dy * 0.05;
+
 			sh->setFillColor(sf::Color(200,0,0,255));
 
 			p->bhv = [](Particle* p) {
+				auto pos = p->spr->getPosition();
+				auto speed = p->speed;
 
+				auto nextPos = pos + speed;
+
+				for (int k = 0; k < 4; ++k) {
+					b2Vec2 inter;
+					b2Vec2 normal;
+					//printf("speed %f %f\n", speed.x, speed.y);
+					if (Lib::willCollide(pos, speed, &walls[k], inter, normal)) {
+						b2Vec2 startToInter = inter - b2Vec2(pos.x, pos.y);
+						b2Vec2 refl = startToInter - 2 * Lib::dot(startToInter, normal) * normal;
+						b2Vec2 endRefl = inter + refl;
+
+						auto oldPos = pos;
+						//pos = Vector2f(endRefl.x, endRefl.y);
+
+						Vector2f reflNorm(refl.x, refl.y);
+						Lib::v2Norm(reflNorm);
+
+						Vector2f outSpeed(reflNorm.x, reflNorm.y);
+						double vlen = Lib::v2Len(speed);
+						outSpeed.x *= vlen;
+						outSpeed.y *= vlen;
+
+						p->speed = outSpeed;
+						pos = Vector2f(endRefl.x, endRefl.y);
+						speed = Vector2f(0,0);
+						nextPos = pos + speed;
+
+
+						break;
+					}
+					else {
+						//nextPos = pos + speed;
+					}
+				}
+				p->spr->setPosition(nextPos);
 			};
 			vec.push_back(p);
 		}
