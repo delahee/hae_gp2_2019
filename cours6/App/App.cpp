@@ -12,6 +12,8 @@
 #include <imgui-SFML.h>
 #include <imgui.h>
 
+#include <Box2D/Box2D.h>
+
 using namespace sf;
 
 static sf::Shader * simpleShader = nullptr;
