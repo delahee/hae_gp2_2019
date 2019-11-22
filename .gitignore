@@ -32,3 +32,5 @@
 /cours6/App/Debug
 /cours6/App/.vs
 /cours6/ExternBox2d/Debug
+/Test_Integration_Box2d/.vs
+/Test_Integration_Box2d/Debug/*.obj

@@ -136,7 +136,7 @@ int main() {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 2;
 	
-	sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML works!", sf::Style::Default, settings);
+	sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML works!", sf::Style::Default | sf::Style::Fullscreen, settings);
 	window.setVerticalSyncEnabled(true);
 
 	sf::View initialView = window.getDefaultView();
@@ -240,7 +240,6 @@ int main() {
 		for (int i = 0; i <nb; ++i) {
 			Shape* sh = new sf::CircleShape(16);
 			sh->setOrigin(16, 16);
-			//auto angle = Lib::rd() * 3.14156;
 			auto angle = 1.0 * i / nb * 3.14156 * 2;
 			float dx = cos(angle) * 180.0f;
 			float dy = sin(angle) * 180.0f;
@@ -312,6 +311,24 @@ int main() {
 			Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window));
 
 			switch (event.type ) {
+
+				case sf::Event::Resized:
+					initialView.setSize({
+									   static_cast<float>(event.size.width),
+									   static_cast<float>(event.size.height)
+						});
+					window.setView(initialView);
+					winTex.create(window.getSize().x, window.getSize().y);
+					delete destX;
+					destX = new sf::RenderTexture();
+					destX->create(window.getSize().x, window.getSize().y);
+					destX->clear(sf::Color(0, 0, 0, 0));
+					delete destFinal;
+					destFinal = new sf::RenderTexture();
+					destFinal->create(window.getSize().x, window.getSize().y);
+					destFinal->clear(sf::Color(0, 0, 0, 0));
+					break;
+
 				case sf::Event::KeyReleased:
 					
 					break;
