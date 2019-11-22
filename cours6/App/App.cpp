@@ -139,7 +139,9 @@ int main() {
 	sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML works!", sf::Style::Default, settings);
 	window.setVerticalSyncEnabled(true);
 
-
+	sf::View initialView = window.getDefaultView();
+	sf::View mainView = window.getDefaultView();
+	window.setView(mainView);
 	ImGui::SFML::Init(window);
 
 	sf::Clock clock;
@@ -301,6 +303,8 @@ int main() {
 	{
 		sf::Event event;//recup les evenement clavier/pad
 		frameStart = clock.getElapsedTime();
+		window.setView(initialView);
+
 		while (window.pollEvent(event))	{
 
 			ImGui::SFML::ProcessEvent(event);
@@ -323,6 +327,12 @@ int main() {
 						p1.x = mousePos.x;
 						p1.y = mousePos.y;
 						showSegment++;
+					}
+
+					if (event.key.code == sf::Keyboard::Space) {
+						mainView = initialView;
+						mainView.move(Vector2f(Lib::dice(-8, 8), Lib::dice(-8, 8)));
+						window.setView(mainView);
 					}
 					break;
 

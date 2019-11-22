@@ -75,5 +75,8 @@ public:
 	static bool willCollide(Vector2f pos, Vector2f speed, Shape * other, b2Vec2 & inter, b2Vec2 & normal);
 
 	static double dot(b2Vec2 v0, b2Vec2 v1);
+	static double dice(double mn, double mx) {
+		return mn + rd() * (mx - mn);
+	}
 	
 };
