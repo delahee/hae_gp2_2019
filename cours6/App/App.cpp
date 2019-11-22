@@ -129,7 +129,7 @@ static Vector2f p1;
 
 static RectangleShape shp;
 
-static RectangleShape walls[4];
+static RectangleShape walls[5];
 
 int main() {
 
@@ -252,12 +252,15 @@ int main() {
 			sh->setFillColor(sf::Color(200,0,0,255));
 
 			p->bhv = [](Particle* p) {
+
+				walls[4].setPosition(shp.getPosition());
+				walls[4].setSize(shp.getSize());
 				auto pos = p->spr->getPosition();
 				auto speed = p->speed;
 
 				auto nextPos = pos + speed;
 
-				for (int k = 0; k < 4; ++k) {
+				for (int k = 0; k < 5; ++k) {
 					b2Vec2 inter;
 					b2Vec2 normal;
 					//printf("speed %f %f\n", speed.x, speed.y);
