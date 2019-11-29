@@ -4,7 +4,7 @@ uniform float time;
 void main()
 {
 	vec4 vertexPos = gl_Vertex;
-    // transform the vertex position
+
     gl_Position = gl_ModelViewProjectionMatrix * vertexPos;
 
     // transform the texture coordinates
