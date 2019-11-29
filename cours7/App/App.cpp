@@ -49,6 +49,7 @@ static std::vector<Turtle*>			s_Turtles;
 
 
 static void startTransforms() {
+	s_Trs.clear();
 	s_Initial = Transform::Identity;
 	s_Initial.translate(500, 500);
 }
@@ -119,7 +120,7 @@ static void computeTransform( sf::Transform & result, int step = -1 ) {
 
 static void plotTurtle() {
 	sf::Transform cur;
-	computeTransform(cur, s_Trs.size() - 1);
+	computeTransform(cur, s_Trs.size());
 	Turtle* t = new Turtle();
 	t->setTransform(cur);
 	s_Turtles.push_back(t);
@@ -229,8 +230,8 @@ int main() {
 					if (event.key.code == sf::Keyboard::Left)		{ rotate(-45);			   plotTurtle(); }
 					if (event.key.code == sf::Keyboard::Right)		{ rotate(45);			   plotTurtle(); }
 
-					if (event.key.code == sf::Keyboard::Add)		{ scaleXY(0.5);			   plotTurtle(); }
-					if (event.key.code == sf::Keyboard::Subtract)	{ scaleXY(2.0);			   plotTurtle(); }
+					if (event.key.code == sf::Keyboard::Add)		{ scaleXY(1.5);				plotTurtle(); }
+					if (event.key.code == sf::Keyboard::Subtract)	{ scaleXY(0.75);			plotTurtle(); }
 
 					break;
 				}
