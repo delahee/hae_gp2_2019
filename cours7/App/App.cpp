@@ -41,7 +41,6 @@ public:
 static sf::Shader * simpleShader = nullptr;
 
 static sf::Texture * whiteTex = nullptr;
-static sf::Texture * gradientMountain = nullptr;
 
 static sf::Transform				s_Initial;
 static std::vector<sf::Transform>	s_Trs;
@@ -51,7 +50,7 @@ static std::vector<Turtle*>			s_Turtles;
 static void startTransforms() {
 	s_Trs.clear();
 	s_Initial = Transform::Identity;
-	s_Initial.translate(500, 500);
+	s_Initial.translate(500, 200);
 }
 
 static void translateX(float dx) {
@@ -117,6 +116,17 @@ static void computeTransform( sf::Transform & result, int step = -1 ) {
 	result = inter;
 }
 
+static void shift_left(float len) {
+	rotate(180);
+	translateY(len);
+	rotate(180);
+}
+
+static void shift_up(float len) {
+	rotate(90);
+	translateY(len);
+	rotate(-90);
+}
 
 static void plotTurtle() {
 	sf::Transform cur;
@@ -125,6 +135,25 @@ static void plotTurtle() {
 	t->setTransform(cur);
 	s_Turtles.push_back(t);
 }
+
+static void koch_n(int n, float len) {
+	if (n == 0) {
+		translateY(len);
+		plotTurtle();
+	}
+	else {
+		koch_n(n - 1, len / 3);
+		rotate(60); plotTurtle();
+		koch_n(n - 1, len / 3);
+		rotate(-120); plotTurtle();
+		koch_n(n - 1, len / 3);
+		rotate(60); plotTurtle();
+		koch_n(n - 1, len / 3);
+	}
+	//shift_left(300);
+	//shift_up(-200);
+}
+
 
 int main() {
 
@@ -232,6 +261,8 @@ int main() {
 
 					if (event.key.code == sf::Keyboard::Add)		{ scaleXY(1.5);				plotTurtle(); }
 					if (event.key.code == sf::Keyboard::Subtract)	{ scaleXY(0.75);			plotTurtle(); }
+
+					if (event.key.code == sf::Keyboard::F1) { koch_n(4, 300);			plotTurtle(); }
 
 					break;
 				}
