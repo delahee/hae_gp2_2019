@@ -1,4 +1,4 @@
-#include "pch.h"
+
 #include "Lib.hpp"
 
 #include <direct.h>
