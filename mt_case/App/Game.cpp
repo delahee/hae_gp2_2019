@@ -28,24 +28,26 @@ void Game::update(double dt){
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
 		player->dx += lat_acc;
 		if (player->dx > max_lat_speed) player->dx = max_lat_speed;
+		if( player->getState() == ES_IDLE) player->changeState(ES_RUNNING);
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
 		player->dx -= lat_acc;
 		if (player->dx < -max_lat_speed) player->dx = -max_lat_speed;
+		if (player->getState() == ES_IDLE) player->changeState(ES_RUNNING);
 	}
 	if (	sf::Keyboard::isKeyPressed(sf::Keyboard::Up) 
 		&&	!wasPressed[sf::Keyboard::Up]
-		&&	player->state != ES_FALLING) {
-		player->dy -= 0.35;
+		&&	player->getState() != ES_FALLING) {
+		player->dy -= 0.45;
 		player->applyGravity = true;
-		player->state = ES_FALLING;
+		player->changeState( ES_FALLING );
 	}
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) ) {
 		player->setPosPixel(100,600); 
 		player->dx = player->dy = 0.0f;
 		player->applyGravity = false;
-		player->state = ES_IDLE;
+		player->changeState( ES_IDLE );
 	}
 
 	for (auto it = evec.begin(); it != evec.end();) {

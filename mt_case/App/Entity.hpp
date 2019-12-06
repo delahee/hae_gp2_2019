@@ -12,7 +12,7 @@ enum EntityState {
 
 class Entity {
 public:
-	EntityState	state = ES_IDLE;
+	
 
 	int CELL_WIDTH = 16; // taille de chaque case width
 
@@ -47,6 +47,8 @@ public:
 
 	void update(double dt);
 
+	void dropParticles();
+
 	void syncCoord() {
 		pixelX = cx * CELL_WIDTH + rx * CELL_WIDTH;
 		pixelY = cy * CELL_WIDTH + ry * CELL_WIDTH;
@@ -55,6 +57,11 @@ public:
 
 	void draw(sf::RenderWindow & win);
 
+	EntityState getState() { return state; };
 	void changeState(EntityState nes);
 
+	std::string getStateName();
+
+private:
+	EntityState	state = ES_IDLE;
 };

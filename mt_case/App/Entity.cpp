@@ -1,5 +1,7 @@
 #include "Entity.hpp"
 #include "Game.hpp"
+#include "Particle.h"
+#include "FadingParticle.h"
 
 using namespace std;
 using namespace sf;
@@ -44,7 +46,49 @@ void Entity::update(double dt) {
 	if (dy >= max_vert_velocity)//cap vertical speed
 		dy = max_vert_velocity;
 
+	if( (dx == 0) && (dy == 0) && getState() != ES_IDLE) {
+		changeState( ES_IDLE );
+	}
+
+	if (getState() == ES_FALLING) {
+		dropParticles();
+	}
+
 	syncCoord();
+}
+
+void Entity::dropParticles() {
+	int life = 30;
+	float sp = Lib::rd() + 0.5;
+	auto & g = *Game::me;
+
+	float rdx = Lib::rd() * 6;
+	float rdy = Lib::rd() * 6 - 8;
+	{
+		auto c = new CircleShape(8, 64);
+		c->setOrigin(8, 8);
+		c->setPosition(pixelX + rdx,pixelY + rdy);
+		c->setFillColor(sf::Color(0xE580EB1a));
+		auto p = new FadingParticle(c);
+		p->life = 30;
+		p->speed.y = sp;
+		p->bhv = Particle::applySpeed;
+		g.pvec.push_back(p);
+
+	}
+
+	{
+		auto c = new CircleShape(2, 32);
+		c->setOrigin(2, 2);
+		c->setPosition(pixelX+rdx, pixelY+rdy);
+		c->setFillColor(sf::Color(0xE580EBff));
+
+		auto p = new FadingParticle(c);
+		p->life = 30;
+		p->speed.y = sp;
+		p->bhv = Particle::applySpeed;
+		g.pvec.push_back(p);
+	}
 }
 
 void Entity::draw(sf::RenderWindow & win) {
@@ -55,7 +99,8 @@ void Entity::draw(sf::RenderWindow & win) {
 	coords.setFillColor(sf::Color::Red);
 	coords.setString(
 		std::to_string(cx) + "," + std::to_string(cy)
-		+ " " + std::to_string(rx) + ","+std::to_string(ry));
+		+ " " + std::to_string(rx) + ","+std::to_string(ry)
+		+ " "+ getStateName() );
 
 	win.draw(*spr);
 	win.draw(coords);
@@ -78,4 +123,19 @@ void Entity::changeState(EntityState nes)
 	}
 
 	state = nes;
+}
+
+std::string Entity::getStateName() {
+	switch (state)
+	{
+	case ES_IDLE:
+		return "idle";
+		break;
+	case ES_RUNNING:
+		return "run";
+		break;
+	case ES_FALLING:
+		return "fall";
+		break;
+	}
 }
