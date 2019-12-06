@@ -219,6 +219,8 @@ int main() {
 	walls[3].setPosition(0, winHeight - 1);
 	walls[3].setSize(Vector2f(winWidth, 16));
 
+	g.init();
+
 	while (window.isOpen())//on passe tout le temps DEBUT DE LA FRAME 
 	{
 		sf::Event event;//recup les evenement clavier/pad
