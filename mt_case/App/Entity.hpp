@@ -12,9 +12,7 @@ enum EntityState {
 
 class Entity {
 public:
-	
-
-	int CELL_WIDTH = 16; // taille de chaque case width
+	const static int CELL_WIDTH = 16; // taille de chaque case width
 
 	int cx = 0;
 	int cy = 0;
@@ -58,7 +56,9 @@ public:
 	void draw(sf::RenderWindow & win);
 
 	EntityState getState() { return state; };
-	void changeState(EntityState nes);
+	void		changeState(EntityState nes);
+
+	bool		willCollide(int cx, int cy);
 
 	std::string getStateName();
 

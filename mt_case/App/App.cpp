@@ -234,6 +234,16 @@ int main() {
 
 			switch (event.type ) {
 
+				case sf::Event::MouseButtonPressed:
+				{
+					auto CW = Entity::CELL_WIDTH;
+					int cx = mousePos.x / CW;
+					int cy = mousePos.y / CW;
+
+					Game::me->togglePlatform(cx, cy);
+					break;
+				}
+
 				case sf::Event::MouseMoved :
 				{
 					int life = 30;

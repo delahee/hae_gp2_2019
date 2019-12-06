@@ -22,8 +22,9 @@ public:
 	static Game * me;
 
 public:
-	std::vector< Particle * > pvec;
-	std::vector< Entity * > evec;
+	std::vector< Particle * >	pvec;
+	std::vector< Entity * >		evec;
+	std::vector<Vector2i>		platforms;
 
 	Game() {
 
@@ -32,6 +33,9 @@ public:
 	Entity *				player;
 
 	void init();
+	void makePlatforms();
 	void update(double dt);
 	void draw(RenderWindow & win);
+	bool willCollide(Entity*, int cx, int cy);
+	void togglePlatform(int cx, int cy);
 };

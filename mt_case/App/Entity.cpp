@@ -22,9 +22,29 @@ void Entity::update(double dt) {
 	///////X BLOCK 
 	//maintain X cell coherency
 	if (dx > 0) 
-		while (rx > 1) { rx--; cx++; }
+		while (rx > 1) { 
+			if (!willCollide(cx+1, cy)) {
+				rx--;
+				cx++;
+			}
+			else {
+				dx = -dx *0.8;
+				rx = 0.9;
+				break;
+			}
+		}
 	else if (dx < 0) 
-		while (rx < 0) { rx++; cx--; }
+		while (rx < 0) { 
+			if (!willCollide(cx - 1, cy)) {
+				rx++;
+				cx--;
+			}
+			else {
+				dx = -dx * 0.8;
+				rx = 0.1;
+				break;
+			}
+		}
 
 	//apply friction
 	dx *= 0.92f;
@@ -38,9 +58,33 @@ void Entity::update(double dt) {
 	ry += dy;
 	//maintain Y cell coherency
 	if (dy > 0)
-		while (ry > 1) { ry--; cy++; }
+		while (ry > 1) { 
+			if (!willCollide(cx, cy + 1)) {
+				ry--; 
+				cy++;
+			}
+			else {
+				dy = 0;
+				ry = 0.99;
+
+				if (getState() == ES_FALLING) {
+					changeState(ES_RUNNING);
+				}
+
+				break;
+			}
+		}
 	else if (dy < 0)
-		while (ry < 0) { ry++; cy--; }
+		while (ry < 0) {
+			if (!willCollide(cx, cy - 1)) {
+				ry++;
+				cy--;
+			}
+			else {
+				dy = 0;
+				ry = 0.01;
+			}
+		}
 	
 	auto max_vert_velocity = 2.0;
 	if (dy >= max_vert_velocity)//cap vertical speed
@@ -123,6 +167,11 @@ void Entity::changeState(EntityState nes)
 	}
 
 	state = nes;
+}
+
+bool Entity::willCollide(int cx, int cy)
+{
+	return Game::me->willCollide(this, cx, cy);
 }
 
 std::string Entity::getStateName() {
