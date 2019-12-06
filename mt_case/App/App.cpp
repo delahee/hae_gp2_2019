@@ -125,7 +125,7 @@ static Vector2f p1;
 
 static RectangleShape shp;
 
-static RectangleShape walls[5];
+static RectangleShape walls[4];
 
 int main() {
 
@@ -213,6 +213,23 @@ int main() {
 	double winHeight = window.getSize().y;
 
 	int showSegment = 0;
+
+	sf::Color c(0xE88A383f);
+	walls[0].setFillColor(c);
+	walls[0].setPosition(-15, 0);
+	walls[0].setSize(Vector2f(16, winHeight));
+
+	walls[1].setFillColor(c);
+	walls[1].setPosition(winWidth - 1, 0);
+	walls[1].setSize(Vector2f(16, winHeight));
+
+	walls[2].setFillColor(c);
+	walls[2].setPosition(0, -15);
+	walls[2].setSize(Vector2f(winWidth, 16));
+
+	walls[3].setFillColor(c);
+	walls[3].setPosition(0, winHeight - 1);
+	walls[3].setSize(Vector2f(winWidth, 16));
 
 	while (window.isOpen())//on passe tout le temps DEBUT DE LA FRAME 
 	{
@@ -316,7 +333,7 @@ int main() {
 		const int squareSpeed = 3;
 
 		myFpsCounter.setPosition(8, 8);
-		myFpsCounter.setFillColor(sf::Color(0xE88A389f));
+		myFpsCounter.setFillColor(sf::Color(0xE88A387f));
 		myFpsCounter.setFont(*font);
 
 		if (every == 0) {
