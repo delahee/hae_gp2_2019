@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SFML_DIR)\include;$(BOX2D_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SFML_DIR)\include;..\Box2D</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,7 +129,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SFML_DIR)\include;$(BOX2D_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SFML_DIR)\include;..\Box2D</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Entity.hpp" />
     <ClInclude Include="FadingParticle.h" />
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="Lib.hpp" />
