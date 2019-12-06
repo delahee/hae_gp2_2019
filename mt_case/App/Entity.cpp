@@ -76,6 +76,9 @@ void Entity::update(double dt) {
 		}
 	else if (dy < 0)
 		while (ry < 0) {
+			ry++;
+			cy--;
+			/*
 			if (!willCollide(cx, cy - 1)) {
 				ry++;
 				cy--;
@@ -84,6 +87,7 @@ void Entity::update(double dt) {
 				dy = 0;
 				ry = 0.01;
 			}
+			*/
 		}
 	
 	auto max_vert_velocity = 2.0;
