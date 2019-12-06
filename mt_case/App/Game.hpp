@@ -16,6 +16,11 @@ using namespace sf;
 class Game {
 public:
 	std::vector< Particle * > pvec;
+	std::vector< Entity * > evec;
+
+	Game() {
+
+	}
 
 	void update(double dt);
 	void draw(RenderWindow & win);

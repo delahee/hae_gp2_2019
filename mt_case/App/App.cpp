@@ -7,6 +7,7 @@
 #include <direct.h>
 #include <functional>
 
+#include "Entity.hpp"
 #include "Lib.hpp"
 #include "Game.hpp"
 #include "Particle.h"
