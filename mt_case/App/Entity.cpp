@@ -16,28 +16,33 @@ void Entity::setPosPixel(float pixelX, float pixelY) {
 
 void Entity::update(double dt) {
 	rx += dx;
-
-	//maintain cell coherency
-	if (dx > 0) {
-		while (rx > 1) {
-			rx--;
-			cx++;
-		}
-	}
-	else if (dx < 0) {
-		while (rx < 0) {
-			rx++;
-			cx--;
-		}
-	}
-
-	ry += dy;
+	
+	///////X BLOCK 
+	//maintain X cell coherency
+	if (dx > 0) 
+		while (rx > 1) { rx--; cx++; }
+	else if (dx < 0) 
+		while (rx < 0) { rx++; cx--; }
 
 	//apply friction
-	dx *= 0.92;
+	dx *= 0.92f;
 
 	//cap dx min val to avoid sliding
 	if (abs(dx) < 0.05) dx = 0;
+	///////end bloc x
+
+	if (applyGravity) dy += gy;
+
+	ry += dy;
+	//maintain Y cell coherency
+	if (dy > 0)
+		while (ry > 1) { ry--; cy++; }
+	else if (dy < 0)
+		while (ry < 0) { ry++; cy--; }
+	
+	auto max_vert_velocity = 2.0;
+	if (dy >= max_vert_velocity)//cap vertical speed
+		dy = max_vert_velocity;
 
 	syncCoord();
 }
@@ -54,4 +59,23 @@ void Entity::draw(sf::RenderWindow & win) {
 
 	win.draw(*spr);
 	win.draw(coords);
+}
+
+void Entity::changeState(EntityState nes)
+{
+	EntityState oldState = state;
+
+	switch (oldState)
+	{
+	default:
+		break;
+	}
+
+	switch (nes)
+	{
+	default:
+		break;
+	}
+
+	state = nes;
 }
