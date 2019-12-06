@@ -25,19 +25,15 @@ public:
 		this->spr = spr;
 	}
 
-	void setPosPixel(float pixelX, float pixelY) {
-		cx = (int)pixelX / CELL_WIDTH;
-		cy = (int)pixelY / CELL_WIDTH;
-
-		rx = (pixelX - (cx*CELL_WIDTH)) / CELL_WIDTH;//reste de cx pour aller a rx
-		ry = (pixelY - (cy*CELL_WIDTH)) / CELL_WIDTH;
-
-		syncCoord();
+	void setPos(float crx, float cry) {
+		rx += crx;
+		ry += crx;
 	}
 
-	void update(double dt) {
-		syncCoord();
-	}
+	void setPosPixel(float pixelX, float pixelY);
+
+	void update(double dt);
+
 
 	void syncCoord() {
 		pixelX = cx * CELL_WIDTH + rx * CELL_WIDTH;
@@ -45,7 +41,5 @@ public:
 		spr->setPosition(pixelX, pixelY );
 	}
 
-	void draw(sf::RenderWindow & win) {
-		win.draw(*spr);
-	}
+	void draw(sf::RenderWindow & win);
 };

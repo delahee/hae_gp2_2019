@@ -17,12 +17,19 @@ using namespace sf;
 
 class Game {
 public:
+	sf::Font * fnt;
+
+	static Game * me;
+
+public:
 	std::vector< Particle * > pvec;
 	std::vector< Entity * > evec;
 
 	Game() {
 
 	}
+
+	Entity *				player;
 
 	void init();
 	void update(double dt);

@@ -2,6 +2,8 @@
 #include "Entity.hpp"
 #include <SFML/Graphics.hpp>
 
+Game* Game::me = nullptr;
+
 void Game::init()
 {
 	RectangleShape *sh = new RectangleShape(Vector2f(12, 24));
@@ -11,10 +13,23 @@ void Game::init()
 	Entity * ent = new Entity(sh);
 	ent->setPosPixel(100, 100);
 	evec.push_back(ent);
+	player = ent;
+	me = this;
 }
 
-void Game::update(double dt)
-{
+void Game::update(double dt){
+	auto lat_acc = 0.075;
+	auto max_lat_speed = 0.75;
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+		player->dx += lat_acc;
+		if (player->dx > max_lat_speed) player->dx = max_lat_speed;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+		player->dx -= lat_acc;
+		if (player->dx < -max_lat_speed) player->dx = -max_lat_speed;
+	}
+
 	for (auto it = evec.begin(); it != evec.end();) {
 		Entity * ent = *it;
 		ent->update(dt);

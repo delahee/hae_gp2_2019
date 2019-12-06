@@ -140,6 +140,7 @@ int main() {
 	if (font->loadFromFile("res/DejaVuSans.ttf") == false) {
 		printf("no such font\n");
 	}
+	g.fnt = font;
 
 	if (!sf::Shader::isAvailable())
 		printf("no shader avail\n");
@@ -317,6 +318,7 @@ int main() {
 		}
 
 		
+
 
 		sf::Time dt = deltaClock.restart();
 
