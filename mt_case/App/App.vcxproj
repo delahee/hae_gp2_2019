@@ -161,11 +161,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="FadingParticle.h" />
+    <ClInclude Include="Game.hpp" />
     <ClInclude Include="Lib.hpp" />
     <ClInclude Include="Particle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="Lib.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -8,7 +8,9 @@
 #include <functional>
 
 #include "Lib.hpp"
+#include "Game.hpp"
 #include "Particle.h"
+#include "FadingParticle.h"
 #include "Action.hpp"
 #include <Box2D/Box2D.h>
 
@@ -34,6 +36,8 @@ static std::vector<sf::Glsl::Vec2>offsetsX;
 
 static std::vector<float>kernelY;
 static std::vector<sf::Glsl::Vec2>offsetsY;
+
+static Game g;
 
 //offset must be normalized by texture size
 static void getKernelOffsets( float dx, std::vector<float> & _kernel, std::vector<sf::Glsl::Vec2> & _offsets, float offsetScale = 1.0f,bool isHoriz = true) {
@@ -102,23 +106,7 @@ static void blur(float dx, sf::Texture* source, sf::Shader*_blurShader, sf::Rend
 
 static sf::Texture * whiteTex = nullptr;
 
-class FadingParticle : public Particle {
-public:
-	int fadeStart = 20;
 
-	FadingParticle(sf::Shape * s) : Particle(s){
-		
-	}
-
-	virtual void update() {
-		Particle::update();
-		if (life < fadeStart) {
-			auto sc = spr->getScale();
-			spr->setScale(Vector2f(sc.x * 0.95, sc.y * 0.95));
-		}
-	}
-
-};
 
 static Vector2f p0;
 static Vector2f p1;
@@ -171,7 +159,6 @@ int main() {
 	if (!blurShader->loadFromFile("res/simple.vert", "res/blur.frag"))
 		printf("unable to load shaders\n");
 	
-	std::vector< Particle * > vec;
 	
 	whiteTex = new Texture();
 	if (!whiteTex->create(1, 1)) printf("tex crea failed\n");
@@ -256,7 +243,7 @@ int main() {
 						p->life = 30;
 						p->speed.y = sp;
 						p->bhv = Particle::applySpeed;
-						vec.push_back(p);
+						g.pvec.push_back(p);
 						
 					}
 
@@ -270,7 +257,7 @@ int main() {
 						p->life = 30;
 						p->speed.y = sp;
 						p->bhv = Particle::applySpeed;
-						vec.push_back(p);
+						g.pvec.push_back(p);
 					}
 					
 					break;
@@ -342,6 +329,7 @@ int main() {
 		}
 		every--;
 
+		g.update(dt.asSeconds());
 		al.update(dt.asSeconds());
 
 		window.clear( sf::Color(3,8,10) );//nettoie la frame
@@ -409,23 +397,13 @@ int main() {
 			}
 		}
 
+		g.draw(window);
+
 		for (int i = 0; i < 4; ++i) {
 			window.draw(walls[i]);
 		}
 
 		window.draw(myFpsCounter);
-
-		for (auto it = vec.begin(); it != vec.end();) {
-			Particle * p = *it;
-			p->update();
-			if (p->killed) {
-				it = vec.erase(it);
-			}
-			else {
-				p->draw(window);
-				it++;
-			}
-		}
 
 		///Draw all bloomed before this
 		{
