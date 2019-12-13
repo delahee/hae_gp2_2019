@@ -65,8 +65,8 @@ public:
 
 	bool		willCollide(int cx, int cy);
 
-	float lat_acc = 0.075;
-	float max_lat_speed = 0.75;
-	int		coverTimer = 0;
+	float		lat_acc = 0.075;
+	float		max_lat_speed = 0.75;
+	int			coverTimer = 0;
 private:
 };

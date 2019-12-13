@@ -299,6 +299,7 @@ int main() {
 					break;
 
 				case sf::Event::KeyPressed:
+					/*
 					if (event.key.code == sf::Keyboard::F1) {
 						p0.x = mousePos.x;
 						p0.y = mousePos.y;
@@ -310,6 +311,7 @@ int main() {
 						p1.y = mousePos.y;
 						showSegment++;
 					}
+					*/
 
 					if (event.key.code == sf::Keyboard::Space) {
 						mainView = initialView;

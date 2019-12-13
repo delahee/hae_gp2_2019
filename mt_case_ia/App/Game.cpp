@@ -23,15 +23,22 @@ void Game::init()
 	makePlatforms();
 }
 
+static unsigned int palette[]= {
+	0xFA8A7Fff,
+	0xCC75D9ff,
+	0x918DF0ff,
+	0x75C2D9ff,
+	0x88FCB4ff
+};
+
+static int palIdx = 2;
 void Game::makePlatforms() {
 	int cScreenWidth = 1280 / Entity::CELL_WIDTH;
 	int cScreenHeight = 720 / Entity::CELL_WIDTH;
 
-
-	platforms.push_back( Vector2i( 8, cScreenHeight-1) );
-	platforms.push_back( Vector2i(8, cScreenHeight-2) );
+	platforms.push_back( Vector3i( 8, cScreenHeight-1 , palette[palIdx] ));
+	platforms.push_back( Vector3i(8, cScreenHeight-2, palette[palIdx] ));
 }
-
 
 void Game::update(double dt){
 	for (auto it = evec.begin(); it != evec.end();) {
@@ -39,6 +46,14 @@ void Game::update(double dt){
 		ent->update(dt);
 		it++;
 	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1)) palIdx = 0;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F2)) palIdx = 1;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F3)) palIdx = 2;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F4)) palIdx = 3;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F5)) palIdx = 4;
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F6)) platforms.clear();
 
 	wasPressed[sf::Keyboard::Up] = sf::Keyboard::isKeyPressed(sf::Keyboard::Up);
 }
@@ -53,9 +68,10 @@ void Game::draw(RenderWindow & win)
 
 	auto CW = Entity::CELL_WIDTH;
 	RectangleShape cell;
-	cell.setFillColor(sf::Color(0x918EF0ff));
+	
 	cell.setSize(Vector2f(CW, CW));
-	for (Vector2i & pl : platforms) {
+	for (Vector3i & pl : platforms) {
+		cell.setFillColor(sf::Color(pl.z));
 		cell.setPosition(pl.x * CW, pl.y * CW);
 		win.draw(cell);
 	}
@@ -89,7 +105,7 @@ bool Game::willCollide(Entity * end, int cx, int cy)
 	if (cy < 0) return true;
 	else if (cy >= cScreenHeight ) return true;
 
-	for (Vector2i & cell : platforms)
+	for (Vector3i & cell : platforms)
 		if (cell.x == cx && cell.y == cy)
 			return true;
 
@@ -99,13 +115,11 @@ bool Game::willCollide(Entity * end, int cx, int cy)
 void Game::togglePlatform(int cx, int cy)
 {
 	for (auto it = platforms.begin(); it != platforms.end(); it++) {
-		Vector2i & pl = *it;
+		Vector3i & pl = *it;
 		if (pl.x == cx && pl.y == cy) {
 			platforms.erase(it);
 			return;
 		}
 	}
-	platforms.push_back(Vector2i(cx, cy));
-
-			
+	platforms.push_back(Vector3i(cx, cy, palette[palIdx]));
 }
