@@ -226,6 +226,7 @@ int main() {
 
 	g.init();
 
+	dijline = sf::VertexArray(sf::PrimitiveType::LineStrip);
 	dijline.clear();
 
 	while (window.isOpen())//on passe tout le temps DEBUT DE LA FRAME 
@@ -282,11 +283,21 @@ int main() {
 					
 					if( g.dijo.computed )
 					{
-
 						std::vector<Vector2f> result;
-						g.dijo.findPath(result, Vector2f(
-								mousePos.x / Entity::CELL_WIDTH,
-								mousePos.y / Entity::CELL_WIDTH ));
+						bool found = g.dijo.findPath(result, Vector2f(
+								(int)(mousePos.x / Entity::CELL_WIDTH),
+								(int)(mousePos.y / Entity::CELL_WIDTH)));
+
+						dijline.clear();
+						if (found) {
+							for (const sf::Vector2f & vtx : result)
+								dijline.append(
+									sf::Vertex(
+										sf::Vector2f(	
+											(vtx.x+0.5) * Entity::CELL_WIDTH,
+											(vtx.y+0.5) * Entity::CELL_WIDTH), sf::Color::Red));
+
+						}
 					}
 					break;
 				}
@@ -313,14 +324,15 @@ int main() {
 						vector<Vector2f> graph;
 
 						int size = 30;
-						for (int x = g.player->cx - 10; x < g.player->cx +20; x++) {
+						for (int x = g.player->cx - 10; x < g.player->cx + 10; x++) {
 							for (int y = g.player->cy - 10; y < g.player->cy + 10; y++) {
 								if(!g.willCollide(x,y))
 									graph.push_back(Vector2f(x, y));
 							}
 						}
-
-						g.dijo.compute(graph, Vector2f(10, 10));
+						printf("len:%d\n", graph.size());
+						g.dijo.compute(graph, Vector2f(g.player->cx , g.player->cy));
+						printf("computed\n");
 					}
 
 					if (event.key.code == sf::Keyboard::F10) {

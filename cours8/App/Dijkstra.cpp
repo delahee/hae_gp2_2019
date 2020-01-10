@@ -99,7 +99,10 @@ bool Dijkstra::findPath(std::vector<Vector2f>& result, const Vector2f & end)
 	Vector2f cur = end;
 	while (cur != start ) {
 		result.push_back(cur);
+		Vector2f prev = cur;
 		cur = pred[cur];
+		if (prev == cur)
+			return false;
 	}
 	if (result.size() == 0) {
 		return false;

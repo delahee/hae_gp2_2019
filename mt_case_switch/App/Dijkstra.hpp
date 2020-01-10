@@ -17,7 +17,6 @@ namespace std {
 
 class Dijkstra {
 public:
-
 	std::vector<Vector2i>						vertices;
 	std::unordered_map<Vector2i, Vector2i>		pred;
 	std::unordered_map<Vector2i, float>			distance;
