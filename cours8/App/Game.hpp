@@ -38,7 +38,7 @@ public:
 	void makePlatforms();
 	void update(double dt);
 	void draw(RenderWindow & win);
-	bool willCollide(Entity*, int cx, int cy);
+	bool willCollide( int cx, int cy);
 	void togglePlatform(int cx, int cy);
 
 	Dijkstra dijo;

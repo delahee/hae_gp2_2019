@@ -115,6 +115,8 @@ static Vector2f p1;
 
 static RectangleShape shp;
 
+static sf::VertexArray dijline;
+
 static RectangleShape	walls[4];
 static Dijkstra			pathes;
 
@@ -224,6 +226,8 @@ int main() {
 
 	g.init();
 
+	dijline.clear();
+
 	while (window.isOpen())//on passe tout le temps DEBUT DE LA FRAME 
 	{
 		sf::Event event;//recup les evenement clavier/pad
@@ -276,6 +280,14 @@ int main() {
 						g.pvec.push_back(p);
 					}
 					
+					if( g.dijo.computed )
+					{
+
+						std::vector<Vector2f> result;
+						g.dijo.findPath(result, Vector2f(
+								mousePos.x / Entity::CELL_WIDTH,
+								mousePos.y / Entity::CELL_WIDTH ));
+					}
 					break;
 				}
 
@@ -299,16 +311,16 @@ int main() {
 				case sf::Event::KeyReleased:
 					if (event.key.code == sf::Keyboard::F9) {
 						vector<Vector2f> graph;
-						for (int x = 0; x < 40; x++) {
-							for (int y = 0; y < 40; y++) {
-								graph.push_back(Vector2f(x, y));
+
+						int size = 30;
+						for (int x = g.player->cx - 10; x < g.player->cx +20; x++) {
+							for (int y = g.player->cy - 10; y < g.player->cy + 10; y++) {
+								if(!g.willCollide(x,y))
+									graph.push_back(Vector2f(x, y));
 							}
 						}
-						g.dijo.init(graph, Vector2f(10, 10));
-						Vector2f coor = g.dijo.findMin(graph);
 
-						double w = g.dijo.weight(coor,Vector2f(20,20));
-						int i = 0;
+						g.dijo.compute(graph, Vector2f(10, 10));
 					}
 
 					if (event.key.code == sf::Keyboard::F10) {
@@ -440,6 +452,7 @@ int main() {
 			window.draw(walls[i]);
 		}
 
+		window.draw(dijline);
 		window.draw(myFpsCounter);
 
 		///Draw all bloomed before this

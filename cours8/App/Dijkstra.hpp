@@ -50,6 +50,7 @@ public:
 	Vector2f								start;
 	std::unordered_map<Vector2f, double>	distance;
 	std::unordered_map<Vector2f, Vector2f>	pred;
+	bool									computed = false;
 	/*
 	Initialisation(G,sdeb)
 	 pour chaque point s de G faire
@@ -72,6 +73,7 @@ public:
 	renvoyer sommet
 	*/
 	Vector2f findMin( std::vector<Vector2f> & queue );
+	int findMin2(std::vector<Vector2f> & queue);
 
 	//Poids(a,b)
 	double weight(Vector2f a, Vector2f b);
@@ -98,7 +100,7 @@ public:
 	       fin pour
 	 fin tant que
 	*/
-	void compute();
+	void compute(std::vector<Vector2f> G, Vector2f sdeb);
 
 	/*
 	A = suite vide
@@ -109,5 +111,5 @@ public:
 	fin tant que
 	*/
 	//returns true if a path was found
-	bool findPath(std::vector<Vector2f> & result);
+	bool findPath(std::vector<Vector2f> & result,const Vector2f & end);
 };

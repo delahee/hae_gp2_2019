@@ -78,7 +78,7 @@ void Game::draw(RenderWindow & win)
 	win.draw(line);
 }
 
-bool Game::willCollide(Entity * end, int cx, int cy)
+bool Game::willCollide( int cx, int cy)
 {
 	int cScreenWidth = 1280 / Entity::CELL_WIDTH;
 	int cScreenHeight = 720/ Entity::CELL_WIDTH;
