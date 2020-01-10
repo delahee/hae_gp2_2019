@@ -108,6 +108,8 @@ void Lib::v2Norm(Vector2f & v0)
 	}
 }
 
+
+
 double Lib::v2iLen(const Vector2i & v0)
 {
 	return sqrt(v0.x*v0.x + v0.y*v0.y);
@@ -115,8 +117,10 @@ double Lib::v2iLen(const Vector2i & v0)
 
 double Lib::v2iDist(const Vector2i & v0, const Vector2i & v1)
 {
-	return v2iLen(v1 - v0);
+	Vector2i d = v1 - v0;
+	return v2iLen(d);
 }
+
 #include <SFML/Graphics.hpp>
 #include <Box2D/Box2D.h>
 

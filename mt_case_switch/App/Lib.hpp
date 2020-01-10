@@ -71,8 +71,8 @@ public:
 	static double v2Dist(const Vector2f&v0, const Vector2f&v1);
 	static void	v2Norm(Vector2f & v0);
 
-	double v2iLen(const Vector2i & v0);
 
+	static double v2iLen(const Vector2i&v0);
 	static double v2iDist(const Vector2i&v0, const Vector2i&v1);
 
 	static double PI;
