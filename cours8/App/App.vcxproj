@@ -164,15 +164,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Dijkstra.hpp" />
+    <ClInclude Include="Dijkstra2.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="FadingParticle.h" />
     <ClInclude Include="Game.hpp" />
+    <ClInclude Include="Heap.hpp" />
     <ClInclude Include="Lib.hpp" />
     <ClInclude Include="Particle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Dijkstra.cpp" />
+    <ClCompile Include="Dijkstra2.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Lib.cpp" />

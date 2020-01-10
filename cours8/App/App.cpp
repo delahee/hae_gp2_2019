@@ -15,6 +15,8 @@
 #include "Action.hpp"
 #include <Box2D/Box2D.h>
 #include "Dijkstra.hpp"
+#include "Dijkstra2.hpp"
+#include "Heap.hpp"
 
 using namespace sf;
 
@@ -323,6 +325,8 @@ int main() {
 					if (event.key.code == sf::Keyboard::F9) {
 						vector<Vector2f> graph;
 
+						auto c = sf::Clock();
+
 						int size = 30;
 						for (int x = g.player->cx - 10; x < g.player->cx + 10; x++) {
 							for (int y = g.player->cy - 10; y < g.player->cy + 10; y++) {
@@ -330,17 +334,79 @@ int main() {
 									graph.push_back(Vector2f(x, y));
 							}
 						}
+						auto time = c.restart();
+						printf("time %f\n", time.asSeconds());
 						printf("len:%d\n", graph.size());
 						g.dijo.compute(graph, Vector2f(g.player->cx , g.player->cy));
 						printf("computed\n");
 					}
 
 					if (event.key.code == sf::Keyboard::F10) {
-
+						auto c = sf::Clock();
+						vector<Vector2f> graph;
+						int size = 30;
+						for (int x = g.player->cx - 10; x < g.player->cx + 10; x++) {
+							for (int y = g.player->cy - 10; y < g.player->cy + 10; y++) {
+								if (!g.willCollide(x, y))
+									graph.push_back(Vector2f(x, y));
+							}
+						}
+						printf("len:%d\n", graph.size());
+						g.dijo2.compute(graph, Vector2f(g.player->cx, g.player->cy));
+						auto time = c.restart();
+						printf("time 2 %f\n", time.asSeconds());
+						printf("computed 2\n");
 					}
 
 					if (event.key.code == sf::Keyboard::F11) {
+						Heap<int> h;
+						h.less = [](const int & a, const int & b) {
+							return a < b;
+						};
 
+						/*
+						h.push(64);
+						h.push(32);
+						h.push(8);
+						int l = 0;
+						h.sanityCheck();
+						*/
+
+						for (int i = 0; i < 20; ++i) {
+							h.push(i);
+							h.sanityCheck();
+						}
+
+						int m = 0;
+						h.pop();
+						h.sanityCheck();
+						int p = 0;
+						
+						h.push(8);
+						h.push(2);
+						h.push(16);
+						h.push(1);
+						h.push(20);
+
+						h.sanityCheck();
+						h.push(32);
+
+						h.sanityCheck();
+						h.push(70);
+
+						h.sanityCheck();
+						h.push(80);
+
+						h.sanityCheck();
+						h.push(-1);
+						h.sanityCheck();
+						h.pop();
+						h.sanityCheck();
+
+						h.pop();
+						h.sanityCheck();
+						
+						int i = 0;
 					}
 					break;
 

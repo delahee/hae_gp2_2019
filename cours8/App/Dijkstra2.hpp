@@ -1,37 +1,14 @@
 #pragma once
 
 #include "Lib.hpp"
+#include "Dijkstra.hpp"
 #include <algorithm>
 #include <unordered_map>
 
 using namespace std;
 
-//permet de faire une map de Vector2i
-namespace std {
-	template <>
-	struct hash<Vector2f>
-	{
-		std::size_t operator()(const Vector2f& k) const
-		{
-			return (unsigned int)(((int)k.x) << 16) | ((unsigned int)k.y);
-		}
-	};
 
-	//table [n][m]
-	//=
-	//[n][n][n][n][n][n][n] ... mfois 
-	//table ** = [ [n] [n] [n]... m fois ]
-
-	// 0.5, 0 => 0 <<16 | 0 => 0
-	// 1    0			| (1<<16) | 0 = 65535 | 0 =>
-	// 1	1			=> 65535 | 1 = 65536
-
-	//0 - 65535				//tous les y pour x = 0,
-	//65535 - 65535 *2		//tous les y pour x = 1,
-	//65535*2 - 65535 *3	//tous les y pour x = 2,
-}
-
-class Dijkstra {
+class Dijkstra2 {
 public:
 	/*
 	0,0 ----- 1,0 ----- 2,0
@@ -47,6 +24,7 @@ public:
 	0,y ----- 1,y ----- x,y 
 	*/
 	std::vector<Vector2f>					G;
+	std::unordered_map<Vector2f,bool>		GExists;
 
 	Vector2f								start;
 	std::unordered_map<Vector2f, double>	distance;
@@ -102,6 +80,8 @@ public:
 	 fin tant que
 	*/
 	void compute(std::vector<Vector2f> G, Vector2f sdeb);
+
+	void compute2(std::vector<Vector2f> G, Vector2f sdeb);
 
 	/*
 	A = suite vide

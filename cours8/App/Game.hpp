@@ -14,6 +14,7 @@
 
 #include "Entity.hpp"
 #include "Dijkstra.hpp"
+#include "Dijkstra2.hpp"
 
 using namespace sf;
 
@@ -42,4 +43,5 @@ public:
 	void togglePlatform(int cx, int cy);
 
 	Dijkstra dijo;
+	Dijkstra2 dijo2;
 };

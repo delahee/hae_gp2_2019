@@ -1,6 +1,7 @@
-#include "Dijkstra.hpp"
+#include "Dijkstra2.hpp"
+#include "Heap.hpp"
 
-void Dijkstra::init(const std::vector<Vector2f>& _graph, const Vector2f & _start)
+void Dijkstra2::init(const std::vector<Vector2f>& _graph, const Vector2f & _start)
 {
 	//copier le graphe depuis l'argument dans la variable membre
 	//initialiser les distances à l'infini pour tout les sommets
@@ -13,6 +14,7 @@ void Dijkstra::init(const std::vector<Vector2f>& _graph, const Vector2f & _start
 	{
 		const Vector2f & vec = G[i];
 		distance[vec] = 9999999999;
+		GExists[vec] = true;
 	}
 	distance[start] = 0.0f;
 
@@ -21,7 +23,7 @@ void Dijkstra::init(const std::vector<Vector2f>& _graph, const Vector2f & _start
 	int i = 0;
 }
 
-Vector2f Dijkstra::findMin(std::vector<Vector2f>& queue)
+Vector2f Dijkstra2::findMin(std::vector<Vector2f>& queue)
 {
 	double mini = INFINITY;
 	Vector2f sommet = Vector2f(-1, -1);
@@ -36,7 +38,7 @@ Vector2f Dijkstra::findMin(std::vector<Vector2f>& queue)
 	return sommet;
 }
 
-int Dijkstra::findMin2(std::vector<Vector2f>& queue)
+int Dijkstra2::findMin2(std::vector<Vector2f>& queue)
 {
 	double mini = INFINITY;
 	int vtx = -1;
@@ -50,13 +52,13 @@ int Dijkstra::findMin2(std::vector<Vector2f>& queue)
 	return vtx;
 }
 
-double Dijkstra::weight(Vector2f a, Vector2f b)
+double Dijkstra2::weight(Vector2f a, Vector2f b)
 {
 	Vector2f dif = b - a;
 	return sqrt((dif.x*dif.x + dif.y*dif.y));
 }
 
-void Dijkstra::updateDist(Vector2f a, Vector2f b)
+void Dijkstra2::updateDist(Vector2f a, Vector2f b)
 {
 	double Poids = weight(a, b);
 	if (distance[b] > distance[a] + Poids)
@@ -66,27 +68,10 @@ void Dijkstra::updateDist(Vector2f a, Vector2f b)
 	}
 }
 
-void Dijkstra::compute(std::vector<Vector2f> G, Vector2f sdeb){
-	init(G, sdeb);
-	std::vector<Vector2f> Q = G;
-	while (Q.size() > 0) {
-		int sai = findMin2(Q);
-		Vector2f sa = Q[sai];
-		Q.erase(Q.begin() + sai);
-		for (const Vector2f & s : Q) {
-			if (	(s.x == sa.x + 1 && s.y == sa.y )
-				||	(s.x == sa.x - 1 && s.y == sa.y) 
-				||	(s.x == sa.x  && s.y == sa.y + 1) 
-				||	(s.x == sa.x  && s.y == sa.y - 1))
-				updateDist(sa, s);
-		}
-	}
-	computed = true;
-}
 
 struct Gt {
 public:
-	static Dijkstra * dij;
+	static Dijkstra2 * dij;
 
 	bool operator()(const Vector2f & a, const Vector2f & b) const {
 
@@ -94,9 +79,42 @@ public:
 	}
 };
 
-Dijkstra*Gt::dij = nullptr;
+Dijkstra2*Gt::dij = nullptr;
 
-bool Dijkstra::findPath(std::vector<Vector2f>& result, const Vector2f & end)
+void Dijkstra2::compute(std::vector<Vector2f> G, Vector2f sdeb) {
+	init(G, sdeb);
+	Heap<Vector2f> Q;
+
+	Q.less = [this](const Vector2f & a, const Vector2f & b) {
+		return distance[a] < distance[b];
+	};
+	
+	for(const Vector2f & v : G)
+		Q.push(v);
+
+	Gt::dij = this;
+
+	while (Q.size() > 0) {
+		int sai = 0;
+		Vector2f sa = Q.extractMin();
+
+		for( int y = sa.y-1; y <= sa.y +1; y++){
+			for (int x = sa.x - 1; x <= sa.x + 1; x++){
+				if (sa.x == x && sa.y == y) continue;
+
+				Vector2f s(x, y);
+
+				if (GExists.find(s) == GExists.end()) continue;
+				
+				updateDist(sa, s);
+				
+			}
+		}
+	}
+	computed = true;
+}
+
+bool Dijkstra2::findPath(std::vector<Vector2f>& result, const Vector2f & end)
 {
 	result.clear();
 	Vector2f cur = end;
