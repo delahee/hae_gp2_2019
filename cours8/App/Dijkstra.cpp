@@ -62,20 +62,7 @@ void Dijkstra::updateDist(Vector2f a, Vector2f b)
 	}
 }
 
-void Dijkstra::compute(std::vector<Vector2f> G, Vector2f sdeb)
-{
-	/*
-	Dijkstra(G,Poids,sdeb)
-	 Initialisation(G,sdeb)
-	 Q := ensemble de tous les nœuds
-	 tant que Q n'est pas un ensemble vide faire
-		   s1 := Trouve_min(Q)
-		   Q := Q privé de s1
-		   pour chaque nœud s2 voisin de s1 faire
-			   maj_distances(s1,s2)
-		   fin pour
-	 fin tant que
-	*/
+void Dijkstra::compute(std::vector<Vector2f> G, Vector2f sdeb){
 	init(G, sdeb);
 	std::vector<Vector2f> Q = G;
 	while (Q.size() > 0) {
@@ -87,6 +74,24 @@ void Dijkstra::compute(std::vector<Vector2f> G, Vector2f sdeb)
 				||	(s.x == sa.x - 1 && s.y == sa.y) 
 				||	(s.x == sa.x  && s.y == sa.y + 1) 
 				||	(s.x == sa.x  && s.y == sa.y - 1))
+				updateDist(sa, s);
+		}
+	}
+	computed = true;
+}
+
+void Dijkstra::compute2(std::vector<Vector2f> G, Vector2f sdeb) {
+	init(G, sdeb);
+	std::vector<Vector2f> Q = G;
+	while (Q.size() > 0) {
+		int sai = findMin2(Q);
+		Vector2f sa = Q[sai];
+		Q.erase(Q.begin() + sai);
+		for (const Vector2f & s : Q) {
+			if ((s.x == sa.x + 1 && s.y == sa.y)
+				|| (s.x == sa.x - 1 && s.y == sa.y)
+				|| (s.x == sa.x  && s.y == sa.y + 1)
+				|| (s.x == sa.x  && s.y == sa.y - 1))
 				updateDist(sa, s);
 		}
 	}

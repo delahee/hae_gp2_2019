@@ -102,6 +102,8 @@ public:
 	*/
 	void compute(std::vector<Vector2f> G, Vector2f sdeb);
 
+	void compute2(std::vector<Vector2f> G, Vector2f sdeb);
+
 	/*
 	A = suite vide
 	s := sfin
